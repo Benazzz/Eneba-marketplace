@@ -250,7 +250,7 @@ Each step is one or more small commits. Hours are rough estimates.
 
 **Sat 14 Nov (rest of today), about 3 h**
 1. Commit PLAN.md. Add `.gitattributes`.
-2. Scaffold `backend/` (Symfony) and `frontend/` (Vite). Add `GET /api/health`. Frontend page calls it.
+2. Scaffold `backend/` (Symfony) and `frontend/` (Vite). Add `GET /api/health` and CORS (nelmio), because the local frontend can't call the API without it. Frontend page calls it.
 3. **Deploy the empty skeleton**: create the Neon DB, the Render Docker service and the Vercel project, and set up CORS. Check that the Vercel page shows "API ok". *(This handles the biggest risk first.)*
 
 **Sun 15 Nov, about 5–6 h**
@@ -302,3 +302,5 @@ If behind schedule, drop items from the bottom of the priority list in §1 (New-
 | 11 | **Plain `fetch` + small hooks** | No data-fetching library. Every line is ours to explain. |
 | 12 | **Cart in localStorage, priced by the backend** | Guests can build a cart like on Eneba. Only offer IDs and quantities are stored. The backend reloads prices and stock, so no cart tables are needed. |
 | 13 | **Monorepo, money in integer cents, Symfony 7.4 LTS** | One repo to submit. Integers avoid float rounding errors. LTS has the most documentation. |
+| 14 | **Local Postgres via Docker Compose** (`backend/compose.yaml`, `postgres:17-alpine`) | Docker is already installed. Same major version as Neon, and pg_trgm is included. One container holds both `app` and `app_test` (Doctrine adds the `_test` suffix in the test env). `docker compose down -v` gives a clean reset. A native Windows install is heavier and hard to reset. Neon branches for dev/tests need internet and make tests slow and flaky. |
+| 15 | **No Symfony CLI** | One less tool to install. PHP's built-in server (`php -S localhost:8000 -t public`) and Composer cover everything, and they're easier to explain. |

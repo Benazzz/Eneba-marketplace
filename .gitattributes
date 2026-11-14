@@ -1,0 +1,17 @@
+# Let git normalize line endings for text files (stored as LF in the repo).
+* text=auto
+
+# Files that run inside the Linux container must keep LF on checkout,
+# even on Windows. A CRLF in start.sh breaks the shebang ("bad interpreter").
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+*.conf      text eol=lf
+
+# Binary files: never touch line endings or show text diffs.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
