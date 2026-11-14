@@ -8,7 +8,7 @@ The author must be able to explain every line of code.
 
 - Assignment: `docs/assignment.pdf`
 - Design reference (eneba.com screenshots, desktop and mobile): `docs/design-reference/`
-- Detailed plan: `PLAN.md` (to be written next session)
+- Detailed plan: `PLAN.md` (scope, architecture, data model, API, build order, decisions with reasons). Read it before starting work.
 
 ## Required parts
 
@@ -24,10 +24,11 @@ Purchase flow: Homepage / Search → Product page → Cart → Checkout (sign-in
 
 ## Stack
 
-- **Frontend:** React + TypeScript
-- **Backend:** PHP + Symfony, REST API
-- **Database:** decided during planning
-- **Hosting:** decided during planning (must be a free tier, e.g. Render or Vercel)
+Monorepo: `frontend/` and `backend/`. Details and reasons are in `PLAN.md`.
+
+- **Frontend:** React + TypeScript (Vite), hosted on Vercel
+- **Backend:** PHP + Symfony REST API, hosted on Render (Docker)
+- **Database:** PostgreSQL on Neon (pg_trgm for search)
 
 ## Deliverables
 
