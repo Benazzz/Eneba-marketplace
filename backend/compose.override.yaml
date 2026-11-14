@@ -1,0 +1,9 @@
+
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    # Fixed host port (the recipe default picks a random one, which only the
+    # Symfony CLI can discover). Bound to 127.0.0.1 so only this machine can reach it.
+    ports:
+      - "127.0.0.1:5432:5432"
+###< doctrine/doctrine-bundle ###

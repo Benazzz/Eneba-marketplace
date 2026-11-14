@@ -1,0 +1,13 @@
+nelmio_cors:
+    defaults:
+        # CORS_ALLOW_ORIGIN is a regex: localhost in .env, the Vercel URL on Render.
+        origin_regex: true
+        allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        # Authorization is needed for the Bearer token (auth, checkout, orders).
+        allow_headers: ['Content-Type', 'Authorization']
+        # Browser may cache a preflight answer for 1 hour.
+        max_age: 3600
+    paths:
+        # Only API routes get CORS headers.
+        '^/api/': null
