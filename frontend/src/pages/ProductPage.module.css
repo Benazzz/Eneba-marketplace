@@ -1,0 +1,304 @@
+.page {
+  padding-block: var(--space-6) var(--space-12);
+}
+
+/* Breadcrumb: home › Store › product */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.breadcrumb a:hover {
+  color: var(--color-text);
+}
+
+.crumbCurrent {
+  overflow: hidden;
+  max-width: 24ch;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Desktop: hero and details on the left, the offer box on the right (spanning both rows, sticky).
+   Mobile: one column, and the offer box comes right after the hero (see the media query). */
+.layout {
+  display: grid;
+  grid-template-areas:
+    'hero aside'
+    'details aside';
+  grid-template-columns: minmax(0, 1fr) 350px;
+  column-gap: var(--space-8);
+  row-gap: var(--space-10);
+}
+
+.hero {
+  display: flex;
+  grid-area: hero;
+  gap: var(--space-8);
+}
+
+.cover {
+  flex-shrink: 0;
+  width: 225px;
+  height: 315px;
+  object-fit: cover;
+  background: var(--color-subnav); /* shown while the image loads */
+}
+
+.heroInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Four fact tiles in two columns, like the region / platform / key / refunds tiles on eneba.com */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6) var(--space-8);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.factTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.region {
+  text-transform: capitalize; /* "NORTH AMERICA" from the API → "North America" */
+}
+
+.factText {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.highlight {
+  color: var(--color-accent);
+}
+
+.positive {
+  color: var(--color-positive);
+}
+
+.facts .positive {
+  font-size: var(--font-size-sm);
+}
+
+/* Featured offer box */
+.aside {
+  position: sticky;
+  top: var(--space-4);
+  grid-area: aside;
+  align-self: start;
+}
+
+.featured {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+}
+
+.featuredLabel {
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.soldBy {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.soldBy strong {
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.featuredButtons {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+.outOfStock {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.moreOffers {
+  display: block;
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  color: var(--color-accent);
+  text-align: center;
+}
+
+.moreOffers:hover {
+  text-decoration: underline;
+}
+
+/* Offers and description */
+.details {
+  display: flex;
+  flex-direction: column;
+  grid-area: details;
+  gap: var(--space-10);
+  min-width: 0;
+}
+
+.section {
+  scroll-margin-top: var(--space-4); /* #offers anchor */
+}
+
+.sectionTitle {
+  margin-bottom: var(--space-4);
+  font-size: var(--font-size-lg);
+}
+
+.offers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.empty {
+  padding: var(--space-6);
+  background: var(--color-subnav);
+  color: var(--color-text-muted);
+}
+
+.description {
+  max-width: 75ch;
+  color: var(--color-text-soft);
+}
+
+/* Not found / error */
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding-block: var(--space-16);
+}
+
+.messageLink {
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: var(--color-surface);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.skeletonTitle {
+  width: 70%;
+  height: 32px;
+  margin-bottom: var(--space-4);
+}
+
+.skeletonLine {
+  width: 40%;
+  height: 16px;
+}
+
+.skeletonBox {
+  height: 220px;
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Tablet: the cover gets smaller before the layout breaks */
+@media (max-width: 1023px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+
+  .cover {
+    width: 150px;
+    height: 210px;
+  }
+
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Mobile (15-mobile-product.png): one column, cover next to the title, offer box under them */
+@media (max-width: 767px) {
+  .page {
+    padding-top: var(--space-4);
+  }
+
+  .breadcrumb {
+    margin-bottom: var(--space-4);
+  }
+
+  .layout {
+    grid-template-areas:
+      'hero'
+      'aside'
+      'details';
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-6);
+  }
+
+  .hero {
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .cover {
+    width: 100px;
+    height: 140px;
+  }
+
+  /* display: contents lets the title and facts take part in .hero's flex row directly:
+     the title sits next to the cover, and the facts wrap onto a full-width line below. */
+  .heroInfo {
+    display: contents;
+  }
+
+  .title {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+    font-size: var(--font-size-lg);
+  }
+
+  .facts {
+    flex-basis: 100%;
+  }
+
+  .aside {
+    position: static;
+  }
+}

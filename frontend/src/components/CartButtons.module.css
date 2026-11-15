@@ -1,0 +1,63 @@
+/* Yellow call-to-action (featured offer box) */
+.buyPrimary {
+  flex: 1;
+  height: 36px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  transition: filter var(--transition-fast);
+}
+
+.buyPrimary:hover {
+  filter: brightness(1.08);
+}
+
+/* White outline button (offer rows) */
+.buyOutline {
+  height: 36px;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+}
+
+.buyOutline:hover,
+.add:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.add {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  transition: background var(--transition-fast);
+}
+
+.addLarge {
+  width: 52px;
+}
+
+.add:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* "All 3 in your cart", under the buttons when the add button is disabled */
+.hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.added {
+  color: var(--color-positive);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}

@@ -1,0 +1,105 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 108px;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-subnav);
+}
+
+.avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.seller {
+  min-width: 0;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.verified {
+  display: flex;
+  color: #2ad3a5; /* eneba's teal verified badge */
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+}
+
+.star {
+  color: var(--color-accent);
+}
+
+.buy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-left: auto;
+}
+
+.priceInfo {
+  text-align: right;
+}
+
+.price {
+  align-items: flex-end;
+}
+
+.lowStock {
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Buttons with the "All 3 in your cart" hint under them */
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Mobile: price and buttons drop under the seller */
+@media (max-width: 767px) {
+  .row {
+    flex-wrap: wrap;
+    padding: var(--space-4);
+  }
+
+  .buy {
+    flex-basis: 100%;
+    justify-content: space-between;
+  }
+
+  .priceInfo {
+    text-align: left;
+  }
+
+  .price {
+    align-items: flex-start;
+  }
+}

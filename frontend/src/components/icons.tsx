@@ -54,6 +54,52 @@ export function CartIcon(props: IconProps) {
   )
 }
 
+/** Cart with a plus, for "add to cart" buttons. */
+export function CartPlusIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M2.5 4h2.2l2.4 10.3a1 1 0 0 0 1 .7h9.3a1 1 0 0 0 1-.7L20.6 8H17" />
+      <path d="M11.5 5v6M8.5 8h6" />
+      <circle cx="9" cy="19.5" r="1.3" />
+      <circle cx="17" cy="19.5" r="1.3" />
+    </Svg>
+  )
+}
+
+export function HomeIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M3.5 11 12 4l8.5 7M6 9.5V20h4.5v-5.5h3V20H18V9.5" />
+    </Svg>
+  )
+}
+
+/** Filled badge with a tick, next to verified sellers. */
+export function VerifiedIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path
+        d="M12 2.5l2.4 1.7 2.9-.2.9 2.8 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-.9 2.8-2.9-.2L12 21.5l-2.4-1.7-2.9.2-.9-2.8-2.4-1.7.9-2.8-.9-2.8 2.4-1.7.9-2.8 2.9.2z"
+        fill="currentColor"
+        stroke="none"
+      />
+      <path d="M8.5 12.2l2.3 2.3 4.7-4.8" stroke="var(--color-bg-deep)" strokeWidth={2} />
+    </Svg>
+  )
+}
+
+export function StarIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path
+        d="M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 17l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z"
+        fill="currentColor"
+        stroke="none"
+      />
+    </Svg>
+  )
+}
+
 export function UserIcon(props: IconProps) {
   return (
     <Svg {...props}>

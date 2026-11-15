@@ -1,0 +1,31 @@
+.price {
+  display: flex;
+  flex-direction: column;
+}
+
+.was {
+  display: flex;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.discount {
+  color: var(--color-positive);
+}
+
+.now {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.large .was {
+  font-size: var(--font-size-sm);
+}
+
+.large .now {
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-extrabold);
+}
