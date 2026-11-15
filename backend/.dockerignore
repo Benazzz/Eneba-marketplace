@@ -1,0 +1,16 @@
+# Rebuilt inside the image
+vendor/
+var/
+
+# Local-only config and secrets (prod values come from Render env vars)
+.env.local
+.env.local.php
+.env.*.local
+
+# Local development only
+compose.yaml
+compose.override.yaml
+tests/
+.editorconfig
+Dockerfile
+.dockerignore
