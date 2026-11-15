@@ -187,27 +187,9 @@
   color: var(--color-text-soft);
 }
 
-/* Not found / error */
-.message {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding-block: var(--space-16);
-}
-
-.messageLink {
-  margin-top: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-accent);
-  color: var(--color-accent-text);
-  font-weight: var(--font-weight-bold);
-}
-
-/* Loading skeleton */
+/* Loading skeleton (used with the global "skeleton" class, which adds the pulse) */
 .skeleton {
   background: var(--color-surface);
-  animation: pulse 1.2s ease-in-out infinite alternate;
 }
 
 .skeletonTitle {
@@ -223,17 +205,6 @@
 
 .skeletonBox {
   height: 220px;
-  animation: pulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  from {
-    opacity: 0.5;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 /* Tablet: the cover gets smaller before the layout breaks */

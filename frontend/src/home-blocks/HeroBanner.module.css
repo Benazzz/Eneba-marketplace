@@ -77,19 +77,9 @@
   text-transform: uppercase;
 }
 
+/* Used with the global "skeleton" class, which adds the pulse. */
 .skeleton {
   background: var(--color-surface);
-  animation: pulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  from {
-    opacity: 0.5;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 /* Phones (14-mobile-home.png): every banner is an equal tile in a strip that scrolls sideways. */

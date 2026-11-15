@@ -40,5 +40,5 @@ export function HeroBanner({ title, banners }: Props) {
 
 /** Same size as the hero, so nothing below it jumps when it arrives. */
 export function HeroBannerSkeleton() {
-  return <div className={`${styles.hero} ${styles.skeleton}`} aria-hidden="true" />
+  return <div className={`${styles.hero} ${styles.skeleton} skeleton`} aria-hidden="true" />
 }

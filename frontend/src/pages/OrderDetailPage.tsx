@@ -3,6 +3,8 @@ import type { Order } from '../api/types'
 import { CheckoutSteps } from '../components/CheckoutSteps'
 import { ImageWithFallback } from '../components/ImageWithFallback'
 import { KeyCode } from '../components/KeyCode'
+import { PageTitle } from '../components/PageTitle'
+import { StatusMessage } from '../components/StatusMessage'
 import { useFetch } from '../hooks/useFetch'
 import { formatDateTime } from '../utils/formatDate'
 import { formatPrice } from '../utils/formatPrice'
@@ -15,11 +17,13 @@ export function OrderDetailPage() {
   // Set by the checkout page, so the "thank you" header only shows right after buying.
   const justPlaced = (useLocation().state as { justPlaced?: boolean } | null)?.justPlaced === true
   const { data: order, error, isLoading } = useFetch<Order>(`/api/orders/${encodeURIComponent(id)}`, { auth: true })
+  const title = <PageTitle>{`Order #${id}`}</PageTitle>
 
   if (isLoading) {
     return (
       <div className={styles.page} aria-busy="true" aria-label="Loading order">
-        <div className={styles.skeleton} />
+        {title}
+        <div className={`${styles.skeleton} skeleton`} />
       </div>
     )
   }
@@ -28,19 +32,23 @@ export function OrderDetailPage() {
     const notFound = error?.status === 404
     return (
       <div className={styles.page}>
-        <h1 className={styles.title}>{notFound ? 'Order not found' : 'Something went wrong'}</h1>
-        <p className={styles.muted}>
-          {notFound ? "This order doesn't exist, or it belongs to another account." : error?.message}
-        </p>
-        <Link to="/orders" className={styles.link}>
-          Back to my orders
-        </Link>
+        {title}
+        <StatusMessage
+          title={notFound ? 'Order not found' : 'Something went wrong'}
+          isError={!notFound}
+          action={{ label: 'Back to my orders', to: '/orders' }}
+        >
+          {notFound
+            ? "This order doesn't exist, or it belongs to another account."
+            : (error?.message ?? 'The order could not be loaded.')}
+        </StatusMessage>
       </div>
     )
   }
 
   return (
     <div className={styles.page}>
+      {title}
       {justPlaced && (
         <>
           <CheckoutSteps current={3} />

@@ -81,7 +81,7 @@ function CheckboxList({ name, options, selected, onToggle, capitalize = false }:
     return (
       <ul className={styles.list} aria-hidden="true">
         {[1, 2, 3].map((i) => (
-          <li key={i} className={styles.skeletonRow} />
+          <li key={i} className={`${styles.skeletonRow} skeleton`} />
         ))}
       </ul>
     )

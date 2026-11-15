@@ -4,6 +4,7 @@ import { ApiError, apiFetch } from '../api/client'
 import type { Order } from '../api/types'
 import { CartLine } from '../components/CartLine'
 import { CheckoutSteps } from '../components/CheckoutSteps'
+import { PageTitle } from '../components/PageTitle'
 import { TextField } from '../components/TextField'
 import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../hooks/useCart'
@@ -99,6 +100,7 @@ export function CheckoutPage() {
 
   return (
     <div className={flow.page}>
+      <PageTitle>Checkout</PageTitle>
       <CheckoutSteps current={2} />
 
       <div className={flow.layout}>
@@ -175,7 +177,7 @@ export function CheckoutPage() {
               </button>
             </div>
           ) : quote === null ? (
-            <div className={flow.skeletonLine} aria-label="Loading your order" />
+            <div className={`${flow.skeletonLine} skeleton`} aria-label="Loading your order" />
           ) : (
             <ul className={`${flow.lines} ${isUpdating ? flow.updating : ''}`}>
               {lines.map((line) => (

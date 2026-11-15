@@ -4,7 +4,9 @@ import { AddToCartButton, BuyNowButton, CartLimitHint } from '../components/Cart
 import { HomeIcon } from '../components/icons'
 import { ImageWithFallback } from '../components/ImageWithFallback'
 import { OfferRow } from '../components/OfferRow'
+import { PageTitle } from '../components/PageTitle'
 import { Price } from '../components/Price'
+import { StatusMessage } from '../components/StatusMessage'
 import { useFetch } from '../hooks/useFetch'
 import styles from './ProductPage.module.css'
 
@@ -27,16 +29,17 @@ export function ProductPage() {
   if (error || !product) {
     const notFound = error?.status === 404
     return (
-      <div className={styles.message}>
-        <h1>{notFound ? 'Product not found' : 'Something went wrong'}</h1>
-        <p>
+      <div className={styles.page}>
+        <PageTitle>{notFound ? 'Product not found' : 'Something went wrong'}</PageTitle>
+        <StatusMessage
+          title={notFound ? 'Product not found' : 'Something went wrong'}
+          isError={!notFound}
+          action={{ label: 'Browse the store', to: '/store' }}
+        >
           {notFound
             ? "This product doesn't exist or was removed."
             : (error?.message ?? 'The product could not be loaded.')}
-        </p>
-        <Link to="/store" className={styles.messageLink}>
-          Browse the store
-        </Link>
+        </StatusMessage>
       </div>
     )
   }
@@ -46,6 +49,7 @@ export function ProductPage() {
 
   return (
     <article className={styles.page}>
+      <PageTitle>{product.name}</PageTitle>
       <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
         <Link to="/" aria-label="Home">
           <HomeIcon size={18} />
@@ -165,14 +169,14 @@ function ProductSkeleton() {
     <div className={styles.page} aria-busy="true" aria-label="Loading product">
       <div className={styles.layout}>
         <div className={styles.hero}>
-          <div className={`${styles.cover} ${styles.skeleton}`} />
+          <div className={`${styles.cover} ${styles.skeleton} skeleton`} />
           <div className={styles.heroInfo}>
-            <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
-            <div className={`${styles.skeleton} ${styles.skeletonLine}`} />
+            <div className={`${styles.skeleton} ${styles.skeletonTitle} skeleton`} />
+            <div className={`${styles.skeleton} ${styles.skeletonLine} skeleton`} />
           </div>
         </div>
         <div className={styles.aside}>
-          <div className={`${styles.featured} ${styles.skeletonBox}`} />
+          <div className={`${styles.featured} ${styles.skeletonBox} skeleton`} />
         </div>
       </div>
     </div>

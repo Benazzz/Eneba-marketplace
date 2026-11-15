@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useSearchParams } from 'react-router-dom'
+import { PageTitle } from '../components/PageTitle'
 import { TextField } from '../components/TextField'
 import { useAuth } from '../hooks/useAuth'
 import { clearField, NO_ERRORS, toFormErrors, type FormErrors } from '../utils/formErrors'
@@ -38,6 +39,7 @@ export function LoginPage() {
 
   return (
     <section className={styles.card}>
+      <PageTitle>Log in</PageTitle>
       <div>
         <h1 className={styles.title}>Log in</h1>
         <p className={styles.subtitle}>

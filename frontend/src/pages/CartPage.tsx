@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom'
 import { CartLine } from '../components/CartLine'
 import { CheckoutSteps } from '../components/CheckoutSteps'
+import { PageTitle } from '../components/PageTitle'
+import { StatusMessage } from '../components/StatusMessage'
 import { useCart } from '../hooks/useCart'
 import { useCartQuote } from '../hooks/useCartQuote'
 import { formatPrice } from '../utils/formatPrice'
@@ -20,6 +22,7 @@ export function CartPage() {
 
   return (
     <div className={styles.page}>
+      <PageTitle>My cart</PageTitle>
       <CheckoutSteps current={1} />
 
       {notice && (
@@ -35,15 +38,9 @@ export function CartPage() {
       )}
 
       {items.length === 0 ? (
-        <section className={styles.panel}>
-          <h1 className={styles.panelTitle}>My cart</h1>
-          <div className={styles.empty}>
-            <p>Your cart is empty.</p>
-            <Link to="/store" className={styles.emptyLink}>
-              Browse the store
-            </Link>
-          </div>
-        </section>
+        <StatusMessage title="Your cart is empty" action={{ label: 'Browse the store', to: '/store' }}>
+          Find a game in the store and add it here.
+        </StatusMessage>
       ) : (
         <div className={styles.layout}>
           <section className={styles.panel} aria-busy={isUpdating}>
@@ -59,7 +56,7 @@ export function CartPage() {
             ) : quote === null ? (
               <div className={styles.lines} aria-label="Loading your cart">
                 {items.map((item) => (
-                  <div key={item.offerId} className={styles.skeletonLine} />
+                  <div key={item.offerId} className={`${styles.skeletonLine} skeleton`} />
                 ))}
               </div>
             ) : (

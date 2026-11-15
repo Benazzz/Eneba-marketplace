@@ -54,11 +54,11 @@ export function ProductRowSkeleton() {
   return (
     <div className={styles.row} aria-hidden="true">
       <div className={styles.header}>
-        <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+        <div className={`${styles.skeleton} ${styles.skeletonTitle} skeleton`} />
       </div>
       <div className={styles.track}>
         {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className={`${styles.item} ${styles.skeleton} ${styles.skeletonCard}`} />
+          <div key={i} className={`${styles.item} ${styles.skeleton} ${styles.skeletonCard} skeleton`} />
         ))}
       </div>
     </div>

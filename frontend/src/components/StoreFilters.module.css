@@ -124,7 +124,6 @@
 .skeletonRow {
   height: 20px;
   background: var(--color-bg);
-  animation: pulse 1.2s ease-in-out infinite alternate;
 }
 
 /* Price range: [ min ] - [ max ] */
@@ -150,14 +149,4 @@
 .priceInput:focus {
   border-color: var(--color-border);
   outline: none;
-}
-
-@keyframes pulse {
-  from {
-    opacity: 0.5;
-  }
-
-  to {
-    opacity: 1;
-  }
 }

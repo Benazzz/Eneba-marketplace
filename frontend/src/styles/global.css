@@ -122,6 +122,28 @@ ul {
   white-space: nowrap;
 }
 
+/* Loading placeholder: every skeleton pulses the same way. The component's own class sets its size and color.
+   It lives here because CSS Modules give each file its own copy of a @keyframes name. */
+.skeleton {
+  animation: skeleton-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
 /* Centers content at the design width (1200px) with a 16px gutter on small screens. */
 .container {
   width: 100%;

@@ -33,34 +33,10 @@
   text-decoration: underline;
 }
 
-.button {
-  padding: var(--space-2) var(--space-5);
-  background: var(--color-accent);
-  color: var(--color-accent-text);
-  font-weight: var(--font-weight-bold);
-}
-
-.empty {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
+/* Used with the global "skeleton" class, which adds the pulse. */
 .skeleton {
   height: 220px;
   background: var(--color-subnav);
-  animation: pulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  from {
-    opacity: 0.5;
-  }
-
-  to {
-    opacity: 1;
-  }
 }
 
 /* History list */

@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { ProductFilters, ProductListResponse, ProductSort } from '../api/types'
 import { CloseIcon, FilterIcon, HomeIcon } from '../components/icons'
+import { PageTitle } from '../components/PageTitle'
 import { Pagination } from '../components/Pagination'
 import { ProductCard } from '../components/ProductCard'
+import { StatusMessage } from '../components/StatusMessage'
 import { StoreFilters } from '../components/StoreFilters'
 import { useFetch } from '../hooks/useFetch'
 import { useStoreQuery } from '../hooks/useStoreQuery'
@@ -51,6 +53,7 @@ export function StorePage() {
 
   return (
     <div className={styles.page}>
+      <PageTitle>{query.q ? `Results for "${query.q}"` : 'Store'}</PageTitle>
       <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
         <Link to="/" aria-label="Home">
           <HomeIcon size={18} />
@@ -184,17 +187,16 @@ function StoreResults({ data, errorMessage, isLoading, hasAnyFilter, onClearAll,
   if (!data) {
     if (errorMessage) {
       return (
-        <div className={styles.message} role="alert">
-          <h2>Something went wrong</h2>
-          <p>{errorMessage}</p>
-        </div>
+        <StatusMessage title="Something went wrong" headingLevel="h2" isError>
+          {errorMessage}
+        </StatusMessage>
       )
     }
-    // First load: grey placeholder cards in the grid's shape.
+    // First load: placeholder cards in the grid's shape.
     return (
       <ul className={styles.grid} aria-hidden="true">
         {Array.from({ length: 8 }, (_, i) => (
-          <li key={i} className={styles.skeletonCard} />
+          <li key={i} className={`${styles.skeletonCard} skeleton`} />
         ))}
       </ul>
     )
@@ -202,32 +204,26 @@ function StoreResults({ data, errorMessage, isLoading, hasAnyFilter, onClearAll,
 
   if (data.total === 0) {
     return (
-      <div className={styles.message}>
-        <h2>No results found</h2>
-        <p>
-          {hasAnyFilter
-            ? 'Try another spelling, or remove some filters.'
-            : 'There are no products in the store yet.'}
-        </p>
-        {hasAnyFilter && (
-          <button type="button" className={styles.messageButton} onClick={onClearAll}>
-            Clear all filters
-          </button>
-        )}
-      </div>
+      <StatusMessage
+        title="No results found"
+        headingLevel="h2"
+        action={hasAnyFilter ? { label: 'Clear all filters', onClick: onClearAll } : undefined}
+      >
+        {hasAnyFilter ? 'Try another spelling, or remove some filters.' : 'There are no products in the store yet.'}
+      </StatusMessage>
     )
   }
 
   // An old or hand-edited link can point past the last page.
   if (data.items.length === 0) {
     return (
-      <div className={styles.message}>
-        <h2>This page is empty</h2>
-        <p>There are only {data.pages} pages of results.</p>
-        <Link to={pageHref(1)} className={styles.messageButton}>
-          Go to the first page
-        </Link>
-      </div>
+      <StatusMessage
+        title="This page is empty"
+        headingLevel="h2"
+        action={{ label: 'Go to the first page', to: pageHref(1) }}
+      >
+        There {data.pages === 1 ? 'is only 1 page' : `are only ${data.pages} pages`} of results.
+      </StatusMessage>
     )
   }
 

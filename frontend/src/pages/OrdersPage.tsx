@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { OrdersResponse } from '../api/types'
+import { PageTitle } from '../components/PageTitle'
+import { StatusMessage } from '../components/StatusMessage'
 import { useFetch } from '../hooks/useFetch'
 import { formatDateTime } from '../utils/formatDate'
 import { formatPrice } from '../utils/formatPrice'
@@ -11,21 +13,24 @@ export function OrdersPage() {
 
   return (
     <div className={styles.page}>
+      <PageTitle>My orders</PageTitle>
       <h1 className={styles.title}>My orders</h1>
 
       {isLoading ? (
-        <div className={styles.skeleton} aria-busy="true" aria-label="Loading orders" />
+        <div className={`${styles.skeleton} skeleton`} aria-busy="true" aria-label="Loading orders" />
       ) : error || !data ? (
-        <p className={styles.muted} role="alert">
+        <StatusMessage
+          title="Something went wrong"
+          headingLevel="h2"
+          isError
+          action={{ label: 'Browse the store', to: '/store' }}
+        >
           {error?.message ?? 'Your orders could not be loaded.'}
-        </p>
+        </StatusMessage>
       ) : data.items.length === 0 ? (
-        <div className={styles.empty}>
-          <p className={styles.muted}>You haven't bought anything yet.</p>
-          <Link to="/store" className={styles.button}>
-            Browse the store
-          </Link>
-        </div>
+        <StatusMessage title="No orders yet" headingLevel="h2" action={{ label: 'Browse the store', to: '/store' }}>
+          You haven't bought anything yet. Your keys will show up here after your first purchase.
+        </StatusMessage>
       ) : (
         <ul className={styles.orderList}>
           {data.items.map((order) => {
