@@ -12,10 +12,10 @@ use App\Entity\Product;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Read queries for the catalog (product page now, the store list later).
+ * Read queries for a single product (the product page).
  *
- * Uses Doctrine ORM and DQL (like EF Core and LINQ). Native SQL is kept for Postgres-only
- * features such as pg_trgm search (PLAN.md §2).
+ * Uses Doctrine ORM and DQL (like EF Core and LINQ). Product lists (store, search, filter counts)
+ * live in ProductSearch, as native SQL, because they use Postgres-only pg_trgm (PLAN.md §2, §5).
  */
 final class ProductCatalog
 {
