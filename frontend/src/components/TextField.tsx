@@ -11,11 +11,25 @@ type Props = {
   /** Browser autofill hint, e.g. "email", "current-password", "new-password". */
   autoComplete?: string
   autoFocus?: boolean
+  /** Which on-screen keyboard phones show, e.g. "numeric" for card numbers. */
+  inputMode?: 'text' | 'numeric' | 'email'
+  maxLength?: number
   error?: string
 }
 
-// A dark input on the login/register card, with its error message underneath.
-export function TextField({ id, label, type = 'text', value, onChange, autoComplete, autoFocus, error }: Props) {
+// A dark input (login/register card, checkout card form), with its error message underneath.
+export function TextField({
+  id,
+  label,
+  type = 'text',
+  value,
+  onChange,
+  autoComplete,
+  autoFocus,
+  inputMode,
+  maxLength,
+  error,
+}: Props) {
   const errorId = `${id}-error`
 
   return (
@@ -32,6 +46,8 @@ export function TextField({ id, label, type = 'text', value, onChange, autoCompl
         placeholder={label}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
+        inputMode={inputMode}
+        maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         className={`${styles.input} ${error ? styles.invalid : ''}`}
         aria-invalid={error ? true : undefined}
