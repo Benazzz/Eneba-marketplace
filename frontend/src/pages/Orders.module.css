@@ -1,0 +1,208 @@
+/* Order history (/orders) and one order with its keys (/orders/:id). */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 1010px;
+  margin-inline: auto;
+  padding-block: var(--space-8) var(--space-16);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+}
+
+.muted {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.amount {
+  color: var(--color-text);
+  font-weight: var(--font-weight-bold);
+}
+
+.link {
+  align-self: flex-start;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.button {
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-bold);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.skeleton {
+  height: 220px;
+  background: var(--color-subnav);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* History list */
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.orderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-subnav);
+  transition: background var(--transition-fast);
+}
+
+.orderRow:hover {
+  background: var(--color-surface);
+}
+
+.orderInfo {
+  min-width: 0;
+}
+
+.orderNumber {
+  font-weight: var(--font-weight-bold);
+}
+
+.orderProducts {
+  overflow: hidden;
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.orderSide {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.viewKeys {
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Order page */
+.thanks {
+  padding: var(--space-5);
+  border-left: 3px solid var(--color-checkout-green);
+  background: var(--color-subnav);
+}
+
+.thanks h1 {
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-xl);
+}
+
+.thanks p {
+  color: var(--color-text-soft);
+}
+
+.orderHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.item {
+  display: flex;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--color-subnav);
+}
+
+.cover {
+  flex-shrink: 0;
+  width: 90px;
+  height: 126px;
+  object-fit: cover;
+  background: var(--color-bg);
+}
+
+.itemBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.itemName {
+  font-weight: var(--font-weight-bold);
+}
+
+.itemName:hover {
+  text-decoration: underline;
+}
+
+.keysLabel {
+  margin-top: var(--space-3);
+  color: var(--color-positive);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.keys {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding-top: var(--space-4);
+  }
+
+  .item {
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .cover {
+    width: 64px;
+    height: 90px;
+  }
+
+  .orderRow {
+    align-items: flex-start;
+  }
+}
