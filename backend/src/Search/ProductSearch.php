@@ -127,6 +127,33 @@ final class ProductSearch
         });
     }
 
+    /**
+     * The homepage product rows: the top products by one sort, in stock only (a row of "Out of stock"
+     * cards would be no use on the homepage). Each row ranks by its own signal (sales, discount, release
+     * date), but the cards come from the same SQL as the store, so prices and discounts match everywhere.
+     *
+     * @return list<ProductCard>
+     */
+    public function ranked(ProductSort $sort, int $limit): array
+    {
+        // Relevance ranks by a search term, and a homepage row has none.
+        if ($sort === ProductSort::Relevance) {
+            throw new \InvalidArgumentException('A ranked list needs a sort that works without a search term.');
+        }
+
+        // No search term, so no pg_trgm threshold is needed (no withThreshold()).
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT '.self::CARD_COLUMNS.' '.self::FROM
+                .' WHERE stock.from_price_cents IS NOT NULL'
+                .' ORDER BY '.$sort->orderBy()
+                .' LIMIT :limit',
+            ['limit' => $limit],
+            ['limit' => ParameterType::INTEGER],
+        );
+
+        return array_map(ProductCard::fromRow(...), $rows);
+    }
+
     /** @return list<ProductCard> */
     private function fetchItems(Connection $conn, ProductListQuery $query): array
     {
