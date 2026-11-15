@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
 import { useCart } from '../hooks/useCart'
-import { CartIcon, SearchIcon, UserIcon } from './icons'
+import { CartIcon, LogoutIcon, SearchIcon, UserIcon } from './icons'
 import { Logo } from './Logo'
 import { SearchBox } from './SearchBox'
 import styles from './Header.module.css'
@@ -13,6 +14,14 @@ export function Header() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const { count: cartCount } = useCart()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    await logout()
+    // Leave the page: on /checkout or /orders, staying would just bounce to the login form.
+    navigate('/')
+  }
 
   // Focus the input once it's visible, so the keyboard opens right away.
   useEffect(() => {
@@ -49,19 +58,38 @@ export function Header() {
             )}
           </Link>
 
-          <div className={styles.account}>
-            {/* On mobile only the icon is shown, so the link gets an aria-label as its name. */}
-            <Link to="/login" className={styles.accountLink} aria-label="Log in">
-              <UserIcon size={26} />
-              <span className={styles.accountText}>Log in</span>
-            </Link>
-            <span className={`${styles.accountText} ${styles.divider}`} aria-hidden="true">
-              |
-            </span>
-            <Link to="/register" className={`${styles.accountText} ${styles.accountLink}`}>
-              Register
-            </Link>
-          </div>
+          {user ? (
+            <div className={styles.account}>
+              <Link to="/orders" className={styles.accountLink} aria-label={`My orders (${user.email})`}>
+                <UserIcon size={26} />
+                <span className={`${styles.accountText} ${styles.email}`} title={user.email}>
+                  {user.email}
+                </span>
+              </Link>
+              <span className={`${styles.accountText} ${styles.divider}`} aria-hidden="true">
+                |
+              </span>
+              <button type="button" className={styles.accountLink} onClick={handleLogout} aria-label="Log out">
+                {/* Mobile shows the icon, desktop shows the word (CSS decides). */}
+                <LogoutIcon size={24} className={styles.mobileOnly} />
+                <span className={styles.accountText}>Log out</span>
+              </button>
+            </div>
+          ) : (
+            <div className={styles.account}>
+              {/* On mobile only the icon is shown, so the link gets an aria-label as its name. */}
+              <Link to="/login" className={styles.accountLink} aria-label="Log in">
+                <UserIcon size={26} />
+                <span className={styles.accountText}>Log in</span>
+              </Link>
+              <span className={`${styles.accountText} ${styles.divider}`} aria-hidden="true">
+                |
+              </span>
+              <Link to="/register" className={`${styles.accountText} ${styles.accountLink}`}>
+                Register
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
 
