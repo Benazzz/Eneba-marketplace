@@ -82,6 +82,39 @@ export type ProductDetail = ProductCard & {
   offers: Offer[]
 }
 
+/** One entry of GET /api/home. Its content comes from GET /api/home/blocks/{id}. */
+export type HomeBlockSummary = {
+  id: number
+  /** The frontend renders the types it knows and skips any other. */
+  type: string
+  title: string
+}
+
+/** GET /api/home: the homepage layout, in display order. */
+export type HomeLayout = {
+  blocks: HomeBlockSummary[]
+}
+
+/** One slide of the hero banner. `linkUrl` is an in-app path, e.g. /product/elden-ring-steam-key-global */
+export type Banner = {
+  id: number
+  title: string
+  subtitle: string
+  imageUrl: string
+  linkUrl: string
+}
+
+/** The block types that show a row of product cards. */
+export type ProductRowBlockType = 'best_sellers' | 'deals' | 'new_releases'
+
+/**
+ * GET /api/home/blocks/{id}. A union on `type`, so after checking `type` TypeScript knows what `items` holds
+ * (like pattern matching on a C# record hierarchy).
+ */
+export type HomeBlockContent =
+  | { id: number; type: 'hero_banner'; title: string; items: Banner[] }
+  | { id: number; type: ProductRowBlockType; title: string; items: ProductCard[] }
+
 /** GET /api/me, and the `user` part of a login/register response. */
 export type AuthUser = {
   id: number

@@ -1,0 +1,125 @@
+/* Full-bleed hero (01-home.png). The page content sits in a centred container, so the hero pulls itself out
+   to the viewport edges: 50% (half the container) - 50vw (half the screen) is how far the edge is away.
+   The negative top margin cancels the page's top padding, so the hero starts right under the header.
+   (MainLayout clips the few pixels of horizontal overflow that 100vw causes when a scrollbar is shown.) */
+.hero {
+  display: flex;
+  height: 380px;
+  margin: calc(-1 * var(--space-8)) calc(50% - 50vw) var(--space-10);
+  background: var(--color-subnav);
+}
+
+.slide {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* The big slide takes about 70% of the width, as in the screenshot. */
+.main {
+  flex-grow: 4.5;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.slide:hover .image,
+.slide:focus-visible .image {
+  transform: scale(1.03);
+}
+
+/* Text over the bottom of the image, on a dark fade so it stays readable on any artwork. */
+.caption {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-12) var(--space-4) var(--space-4);
+  background: linear-gradient(to top, rgb(21 7 51 / 0.85), transparent);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* The big slide's text lines up with the page content (the centred container), like on eneba.com. */
+.main .caption {
+  padding: var(--space-16) max(var(--gutter), calc((100vw - var(--container-width)) / 2)) var(--space-10);
+}
+
+.main .title {
+  font-size: 40px;
+}
+
+.subtitle {
+  max-width: 420px;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Looks like a button; the whole slide is the link. */
+.cta {
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-8);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-extrabold);
+  text-transform: uppercase;
+}
+
+.skeleton {
+  background: var(--color-surface);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Phones (14-mobile-home.png): every banner is an equal tile in a strip that scrolls sideways. */
+@media (max-width: 767px) {
+  .hero {
+    height: 190px;
+    margin-bottom: var(--space-8);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .slide,
+  .main {
+    flex: 0 0 42%;
+    scroll-snap-align: start;
+  }
+
+  .main .caption,
+  .caption {
+    padding: var(--space-8) var(--space-3) var(--space-3);
+  }
+
+  .main .title,
+  .title {
+    font-size: var(--font-size-sm);
+  }
+
+  .subtitle,
+  .cta {
+    display: none;
+  }
+}

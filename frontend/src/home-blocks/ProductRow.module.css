@@ -1,0 +1,117 @@
+.row {
+  margin-bottom: var(--space-10);
+}
+
+/* Title on the left, arrows on the right. */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+/* "Recommended for you" in 01-home.png */
+.title {
+  font-size: 28px;
+  font-weight: var(--font-weight-bold);
+}
+
+.arrows {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border-subtle);
+  transition: border-color var(--transition-fast);
+}
+
+.arrow:hover,
+.arrow:focus-visible {
+  border-color: var(--color-border);
+}
+
+/* The chevron points down; turned sideways for back / forward (same as Pagination). */
+.prev {
+  transform: rotate(90deg);
+}
+
+.next {
+  transform: rotate(-90deg);
+}
+
+/* One line of cards, scrolled sideways. Each column is exactly 1/5 of the row (minus the gaps), so five cards
+   fit and the arrows move by whole cards. Scroll snapping stops a swipe at a card's edge. */
+.track {
+  --visible: 5;
+
+  display: grid;
+  grid-auto-columns: calc((100% - (var(--visible) - 1) * var(--space-5)) / var(--visible));
+  grid-auto-flow: column;
+  gap: var(--space-5);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none; /* the arrows (desktop) or a swipe (phones) scroll it */
+}
+
+.item {
+  scroll-snap-align: start;
+}
+
+.skeleton {
+  background: var(--color-surface);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.skeletonTitle {
+  width: 220px;
+  height: 34px;
+}
+
+/* Roughly a card's height, so the page doesn't jump when the real cards arrive. */
+.skeletonCard {
+  aspect-ratio: 3 / 5;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .track {
+    --visible: 3;
+  }
+}
+
+/* Phones: a bit more than two cards show, so it's clear the row scrolls. No arrows; it's swiped. */
+@media (max-width: 767px) {
+  .row {
+    margin-bottom: var(--space-8);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .arrows {
+    display: none;
+  }
+
+  .track {
+    --visible: 2.3;
+
+    gap: var(--space-3);
+    grid-auto-columns: calc((100% - 2 * var(--space-3)) / var(--visible));
+  }
+}
