@@ -144,3 +144,24 @@ export function CheckIcon(props: IconProps) {
     </Svg>
   )
 }
+
+/** Points down. Rotated with CSS for "open" states and for previous/next arrows. */
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m6 9 6 6 6-6" />
+    </Svg>
+  )
+}
+
+/** Three sliders, for the mobile "Filters" button. */
+export function FilterIcon(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M4 6h16M4 12h16M4 18h16" />
+      <circle cx="9" cy="6" r="2" fill="currentColor" />
+      <circle cx="15" cy="12" r="2" fill="currentColor" />
+      <circle cx="8" cy="18" r="2" fill="currentColor" />
+    </Svg>
+  )
+}

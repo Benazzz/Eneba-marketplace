@@ -1,0 +1,163 @@
+/* Left-hand filter panel, as in 02-store-filters-top.png: lighter purple blocks with a gap between them. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.section {
+  background: var(--color-surface);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  list-style: none; /* hides the browser's own triangle marker */
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  margin-left: auto;
+  padding-inline: var(--space-1);
+  border-radius: 10px;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-xs);
+}
+
+.chevron {
+  margin-left: auto;
+  transition: transform var(--transition-fast);
+}
+
+/* When the badge is there it takes the auto margin, so the chevron sits right after it. */
+.badge + .chevron {
+  margin-left: 0;
+}
+
+/* Open: chevron points up, like the screenshots. */
+.section[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.content {
+  padding: 0 var(--space-5) var(--space-5);
+}
+
+/* Checkbox rows: box, label, count on the right. */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.optionDisabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+/* A drawn checkbox (white outline, yellow when ticked) with the real input kept for keyboard and screen readers. */
+.checkbox {
+  display: grid;
+  flex-shrink: 0;
+  place-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 2px solid var(--color-border);
+  border-radius: 2px;
+  appearance: none;
+  cursor: inherit;
+}
+
+.checkbox:checked {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+/* The tick: two borders of a small box, turned 45°. */
+.checkbox:checked::after {
+  width: 6px;
+  height: 11px;
+  margin-top: -2px;
+  border: solid var(--color-accent-text);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  content: '';
+}
+
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.count {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.skeletonRow {
+  height: 20px;
+  background: var(--color-bg);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+/* Price range: [ min ] - [ max ] */
+.priceForm {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.priceInput {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-input);
+}
+
+.priceInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.priceInput:focus {
+  border-color: var(--color-border);
+  outline: none;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

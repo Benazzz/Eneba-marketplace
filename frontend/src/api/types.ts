@@ -31,6 +31,30 @@ export type ProductCard = {
   offerCount: number
 }
 
+/** Sort values of GET /api/products. `relevance` (best match) only applies while there's a search term. */
+export type ProductSort = 'relevance' | 'popular' | 'price_asc' | 'price_desc' | 'discount' | 'newest'
+
+/** GET /api/products: one page of the store grid. `pages` is 0 when nothing matches. */
+export type ProductListResponse = {
+  items: ProductCard[]
+  total: number
+  page: number
+  pages: number
+}
+
+/** One checkbox in the filter panel. `count` applies every other active filter (faceted). */
+export type FacetValue = {
+  value: string
+  count: number
+}
+
+/** GET /api/products/filters. Min/max are null when nothing matches. */
+export type ProductFilters = {
+  platforms: FacetValue[]
+  regions: FacetValue[]
+  price: { minCents: number | null; maxCents: number | null }
+}
+
 export type SellerSummary = {
   id: number
   name: string

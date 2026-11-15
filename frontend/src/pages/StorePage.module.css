@@ -1,0 +1,206 @@
+.page {
+  padding-bottom: var(--space-12);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.breadcrumb a:hover {
+  color: var(--color-text);
+}
+
+.title {
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+  overflow-wrap: anywhere; /* a very long search term must not widen the page */
+}
+
+/* Desktop: filter panel (220px) on the left, results on the right. */
+.layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* Active filters row: chips and "Clear all". */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 36px;
+  margin-bottom: var(--space-4);
+}
+
+.chip,
+.filtersToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: 18px;
+  background: var(--color-subnav);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  transition: background-color var(--transition-fast);
+}
+
+.chip:hover,
+.filtersToggle:hover {
+  background: var(--color-bg-deep);
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* Only on mobile, where the panel is folded away (see the media query). */
+.filtersToggle {
+  display: none;
+}
+
+.clearAll {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.clearAll:hover {
+  text-decoration: underline;
+}
+
+/* "Results found: N" on the left, sort on the right. */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.count {
+  min-height: 1.5em;
+  font-size: var(--font-size-sm);
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--font-weight-bold);
+}
+
+.sortSelect {
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* The open list is drawn by the browser; without this, some show white text on white. */
+.sortSelect option {
+  background: var(--color-dropdown);
+}
+
+/* Card grid: 4 per row on desktop (as in the screenshots), 3 on tablets, 2 on phones. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-5);
+  transition: opacity var(--transition-fast);
+}
+
+/* The previous results stay visible, faded, while new ones load. */
+.gridLoading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.skeletonCard {
+  aspect-ratio: 3 / 5;
+  background: var(--color-surface);
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.pageInfo {
+  margin-top: var(--space-3);
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+/* Empty, error and "page out of range" states. */
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-10) var(--space-8);
+  background: var(--color-surface);
+}
+
+.messageButton {
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: var(--font-weight-bold);
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .title {
+    margin-bottom: var(--space-5);
+    font-size: var(--font-size-xl);
+  }
+
+  /* One column: the panel sits above the results, folded away until "Filters" is tapped. */
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .sidebarOpen {
+    display: block;
+  }
+
+  .filtersToggle {
+    display: inline-flex;
+    margin-bottom: var(--space-4);
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+}
