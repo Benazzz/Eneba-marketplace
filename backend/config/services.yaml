@@ -29,3 +29,10 @@ when@test:
         logger:
             class: App\Tests\Support\InMemoryLogger
             public: true
+
+        # Asked before the real homepage providers (higher priority), so HomeTest can make one block's
+        # provider throw. It supports nothing unless a test sets FailingBlockProvider::$failType.
+        App\Tests\Support\FailingBlockProvider:
+            autoconfigure: false
+            tags:
+                - { name: app.home_block_provider, priority: 100 }
