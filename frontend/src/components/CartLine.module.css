@@ -1,0 +1,174 @@
+.line {
+  display: flex;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  border: 1px solid transparent;
+  background: var(--color-bg);
+}
+
+/* A line that blocks checkout gets a red edge. */
+.problem {
+  border-color: var(--color-error);
+}
+
+.coverLink {
+  flex-shrink: 0;
+}
+
+.cover {
+  width: 90px;
+  height: 126px;
+  object-fit: cover;
+  background: var(--color-subnav);
+}
+
+.info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.seller {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.seller strong {
+  margin-left: var(--space-1);
+  color: var(--color-text);
+}
+
+.name {
+  font-weight: var(--font-weight-bold);
+  line-height: 1.35;
+}
+
+.name:hover {
+  text-decoration: underline;
+}
+
+.meta {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.error {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.lowStock {
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.remove {
+  color: var(--color-text-soft);
+  transition: color var(--transition-fast);
+}
+
+.remove:hover {
+  color: var(--color-text);
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin-top: auto;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stepper button {
+  width: 28px;
+  height: 28px;
+  font-size: var(--font-size-lg);
+}
+
+.stepper button:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.12);
+}
+
+.stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.stepper span {
+  min-width: 2ch;
+  text-align: center;
+}
+
+.quantity {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.price {
+  min-width: 70px;
+  font-weight: var(--font-weight-bold);
+  text-align: right;
+}
+
+/* Read-only version in the checkout summary: smaller, no background */
+.compact {
+  gap: var(--space-3);
+  padding: 0 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: none;
+}
+
+.compact .cover {
+  width: 50px;
+  height: 70px;
+}
+
+.compact .name {
+  font-size: var(--font-size-sm);
+}
+
+.compact .meta {
+  margin-top: 0;
+  font-size: var(--font-size-xs);
+}
+
+@media (max-width: 767px) {
+  .line {
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .cover {
+    width: 64px;
+    height: 90px;
+  }
+
+  /* The stepper and price go to their own row under the name. */
+  .side {
+    flex-direction: row-reverse;
+    align-items: center;
+    width: 100%;
+  }
+
+  .priceRow {
+    margin-top: 0;
+  }
+}

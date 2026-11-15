@@ -15,6 +15,7 @@
   --color-accent: #fad318; /* yellow call-to-action buttons */
   --color-accent-text: #1f0a4e; /* text on yellow */
   --color-positive: #7ee916; /* green price / cashback highlights */
+  --color-checkout-green: #1fc79f; /* checkout progress steps */
   --color-text: #ffffff;
   --color-text-muted: #aa95d9; /* search placeholder, secondary text */
   --color-text-soft: rgb(255 255 255 / 0.8); /* footer links and small print */

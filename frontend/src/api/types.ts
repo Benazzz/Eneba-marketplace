@@ -76,3 +76,61 @@ export type AuthResponse = {
 export type SearchSuggestResponse = {
   items: ProductCard[]
 }
+
+/** One line of POST /api/cart/quote, priced by the backend. */
+export type CartQuoteLine = {
+  offer: {
+    id: number
+    priceCents: number
+    discountPercent: number
+    seller: SellerSummary
+  }
+  product: {
+    id: number
+    slug: string
+    name: string
+    coverUrl: string
+    platform: string
+    region: string
+  }
+  /** What the cart asked for. It can be above `available`. */
+  quantity: number
+  lineTotalCents: number
+  /** Keys in stock right now. 0 = sold out. */
+  available: number
+}
+
+/** POST /api/cart/quote. Offers that don't exist are left out of `lines`. */
+export type CartQuote = {
+  lines: CartQuoteLine[]
+  totalCents: number
+}
+
+/** POST /api/checkout (201) and GET /api/orders/{id}. */
+export type Order = {
+  id: number
+  /** ISO 8601 */
+  createdAt: string
+  totalCents: number
+  cardLast4: string
+  items: {
+    productName: string
+    productSlug: string
+    coverUrl: string
+    unitPriceCents: number
+    quantity: number
+    keys: string[]
+  }[]
+}
+
+/** One row of GET /api/orders. */
+export type OrderSummary = {
+  id: number
+  createdAt: string
+  totalCents: number
+  items: { productName: string; quantity: number }[]
+}
+
+export type OrdersResponse = {
+  items: OrderSummary[]
+}

@@ -1,0 +1,76 @@
+.steps {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-8);
+  font-size: var(--font-size-sm);
+}
+
+.step {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+/* The line between two steps, drawn after each step except the last. */
+.step:not(:last-child)::after {
+  flex: 1;
+  height: 1px;
+  margin-inline: var(--space-3);
+  background: var(--color-text-muted);
+  content: '';
+}
+
+.step:last-child {
+  flex: 0;
+}
+
+.marker {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.done .marker {
+  border: 1.5px solid var(--color-checkout-green);
+  color: var(--color-checkout-green);
+}
+
+.done.step::after {
+  background: var(--color-checkout-green);
+}
+
+.current .marker {
+  background: var(--color-checkout-green);
+  color: var(--color-text);
+}
+
+.current .label {
+  color: var(--color-checkout-green);
+}
+
+.upcoming {
+  color: var(--color-text-muted);
+}
+
+.upcoming .marker {
+  background: rgb(255 255 255 / 0.2);
+}
+
+@media (max-width: 767px) {
+  .steps {
+    margin-bottom: var(--space-5);
+  }
+
+  /* Only the current step keeps its label on small screens. */
+  .step:not(.current) .label {
+    display: none;
+  }
+}

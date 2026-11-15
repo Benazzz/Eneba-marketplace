@@ -85,6 +85,15 @@ function subscribe(onChange: () => void) {
   }
 }
 
+/**
+ * Takes these offers out of the cart. A plain function, not part of the hook, so non-component code
+ * (useCartQuote's request callback) can call it without depending on a component's render.
+ */
+export function removeOffersFromCart(offerIds: number[]) {
+  const ids = new Set(offerIds)
+  write(getSnapshot().filter((item) => !ids.has(item.offerId)))
+}
+
 export function useCart() {
   const items = useSyncExternalStore(subscribe, getSnapshot)
 
