@@ -33,7 +33,7 @@ const formatExpiry = (digits: string) => (digits.length > 2 ? `${digits.slice(0,
 export function CheckoutPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { items, quantityOf, clear } = useCart()
+  const { items, quantityOf, setQuantity, clear } = useCart()
   const { quote, error: quoteError, isUpdating, canCheckout, retry } = useCartQuote()
 
   const [cardNumber, setCardNumber] = useState('') // digits only
@@ -179,7 +179,15 @@ export function CheckoutPage() {
           ) : (
             <ul className={`${flow.lines} ${isUpdating ? flow.updating : ''}`}>
               {lines.map((line) => (
-                <CartLine key={line.offer.id} line={line} quantity={quantityOf(line.offer.id)} />
+                <CartLine
+                  key={line.offer.id}
+                  line={line}
+                  quantity={quantityOf(line.offer.id)}
+                  compact
+                  // Same as the cart page: the cart changes, a new quote follows and the total updates.
+                  // No trash button here; removing stays on the cart page ("Edit cart").
+                  onQuantityChange={(quantity) => setQuantity(line.offer.id, quantity, line.available)}
+                />
               ))}
             </ul>
           )}

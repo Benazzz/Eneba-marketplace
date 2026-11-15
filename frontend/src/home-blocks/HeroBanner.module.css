@@ -67,12 +67,12 @@
   font-weight: var(--font-weight-semibold);
 }
 
-/* Looks like a button; the whole slide is the link. */
+/* Looks like a button; the whole slide is the link. Blue with white text as in 01-home.png. */
 .cta {
   margin-top: var(--space-2);
   padding: var(--space-3) var(--space-8);
-  background: var(--color-accent);
-  color: var(--color-accent-text);
+  background: var(--color-banner-cta);
+  color: var(--color-text);
   font-weight: var(--font-weight-extrabold);
   text-transform: uppercase;
 }

@@ -14,6 +14,7 @@
   --color-error: #ff6b7a; /* field errors */
   --color-accent: #fad318; /* yellow call-to-action buttons */
   --color-accent-text: #1f0a4e; /* text on yellow */
+  --color-banner-cta: #4100ff; /* blue button on hero banners ("SHOP CARDS"). Yellow stays for buy actions. */
   --color-positive: #7ee916; /* green price / cashback highlights */
   --color-checkout-green: #1fc79f; /* checkout progress steps */
   --color-region: #3fd8b0; /* "GLOBAL" / "EUROPE" on product cards */

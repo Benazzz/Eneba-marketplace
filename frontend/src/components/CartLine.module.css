@@ -128,17 +128,35 @@
   text-align: right;
 }
 
-/* Read-only version in the checkout summary: smaller, no background */
+/* Read-only version in the checkout summary: smaller, no background.
+   The summary is narrow, so it's a grid as in 09-checkout-payment.png: the cover on the left, the name at full
+   width next to it, and the "× 1" and price row under the name (beside it, the name would get a thin column). */
 .compact {
-  gap: var(--space-3);
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
   padding: 0 0 var(--space-4);
   border-bottom: 1px solid var(--color-border-subtle);
   background: none;
 }
 
+.compact .coverLink {
+  grid-row: span 2;
+}
+
 .compact .cover {
   width: 50px;
   height: 70px;
+}
+
+.compact .side {
+  grid-column: 2;
+  align-items: stretch;
+}
+
+.compact .priceRow {
+  justify-content: space-between;
+  margin-top: 0;
 }
 
 .compact .name {

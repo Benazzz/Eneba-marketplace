@@ -12,21 +12,23 @@ type Props = {
   line: CartQuoteLine
   /** From the cart itself, so +/- show at once, before the new quote arrives. */
   quantity: number
-  /** Without these two, the line is read-only (the checkout page's summary). */
+  /** Without it, the quantity is shown as plain "× 2" instead of the − / + stepper. */
   onQuantityChange?: (quantity: number) => void
+  /** Without it, there's no trash button. */
   onRemove?: () => void
+  /** The smaller layout of the checkout page's summary (09-checkout-payment.png). */
+  compact?: boolean
 }
 
 // One product in the cart (08-checkout-cart.png): cover, seller, name, quantity stepper and price.
 // The unit price always comes from the backend quote; only the multiplication by the quantity happens here.
-export function CartLine({ line, quantity, onQuantityChange, onRemove }: Props) {
+export function CartLine({ line, quantity, onQuantityChange, onRemove, compact = false }: Props) {
   const { offer, product, available } = line
-  const editable = onQuantityChange !== undefined && onRemove !== undefined
   const soldOut = available === 0
   const tooMany = !soldOut && quantity > available
 
   return (
-    <li className={`${styles.line} ${editable ? '' : styles.compact} ${soldOut || tooMany ? styles.problem : ''}`}>
+    <li className={`${styles.line} ${compact ? styles.compact : ''} ${soldOut || tooMany ? styles.problem : ''}`}>
       <Link to={`/product/${product.slug}`} className={styles.coverLink} tabIndex={-1} aria-hidden="true">
         <ImageWithFallback src={product.coverUrl} alt="" label={product.name} className={styles.cover} loading="lazy" />
       </Link>
@@ -50,14 +52,14 @@ export function CartLine({ line, quantity, onQuantityChange, onRemove }: Props) 
       </div>
 
       <div className={styles.side}>
-        {editable && (
+        {onRemove && (
           <button type="button" className={styles.remove} onClick={onRemove} aria-label={`Remove ${product.name}`}>
             <TrashIcon size={20} />
           </button>
         )}
 
         <div className={styles.priceRow}>
-          {editable && !soldOut ? (
+          {onQuantityChange && !soldOut ? (
             <div className={styles.stepper}>
               <button
                 type="button"

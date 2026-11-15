@@ -57,6 +57,14 @@
   line-clamp: 2;
 }
 
+/* Phone cards are narrow, so two lines cut off too much of the name. */
+@media (max-width: 767px) {
+  .name {
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+}
+
 .region {
   color: var(--color-region);
   font-size: var(--font-size-xs);
