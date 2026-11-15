@@ -1,53 +1,46 @@
-import { useEffect, useState } from 'react'
-
-// Temporary deploy probe: proves the frontend can reach the API (URL + CORS).
-// Replaced by the real app shell and the api.ts wrapper in build step 5.
-
-type Health =
-  | { state: 'checking' }
-  | { state: 'ok' }
-  | { state: 'error'; message: string }
-
-const API_URL = import.meta.env.VITE_API_URL
+import { Route, Routes } from 'react-router-dom'
+import type { HealthResponse } from './api/types'
+import { WakeUpNotice } from './components/WakeUpNotice'
+import { useFetch } from './hooks/useFetch'
+import { AuthLayout } from './layouts/AuthLayout'
+import { MainLayout } from './layouts/MainLayout'
+import { CartPage } from './pages/CartPage'
+import { CheckoutPage } from './pages/CheckoutPage'
+import { HomePage } from './pages/HomePage'
+import { LoginPage } from './pages/LoginPage'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { OrderDetailPage } from './pages/OrderDetailPage'
+import { OrdersPage } from './pages/OrdersPage'
+import { ProductPage } from './pages/ProductPage'
+import { RegisterPage } from './pages/RegisterPage'
+import { StorePage } from './pages/StorePage'
 
 function App() {
-  // A missing env var is known before the first render, so it is set here, not in the effect.
-  const [health, setHealth] = useState<Health>(() =>
-    API_URL ? { state: 'checking' } : { state: 'error', message: 'VITE_API_URL is not set' },
-  )
-
-  useEffect(() => {
-    if (!API_URL) return
-
-    // Abort the request if the component unmounts (StrictMode mounts twice in dev).
-    const controller = new AbortController()
-
-    fetch(`${API_URL}/api/health`, { signal: controller.signal })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const body: { status?: string } = await res.json()
-        if (body.status !== 'ok') throw new Error('Unexpected response')
-        setHealth({ state: 'ok' })
-      })
-      .catch((err: unknown) => {
-        if (controller.signal.aborted) return
-        // A CORS rejection shows up here as a generic network error ("Failed to fetch").
-        setHealth({ state: 'error', message: err instanceof Error ? err.message : String(err) })
-      })
-
-    return () => controller.abort()
-  }, [])
+  // Warm-up ping: starts waking the API server (the free Render tier sleeps when idle) as soon as the app opens,
+  // even on pages that don't load data yet. The result isn't used. If it's slow, WakeUpNotice appears.
+  useFetch<HealthResponse>('/api/health')
 
   return (
-    <main>
-      <h1>Eneba marketplace</h1>
-      <p>
-        API:{' '}
-        {health.state === 'checking' && 'checking…'}
-        {health.state === 'ok' && 'ok'}
-        {health.state === 'error' && `error (${health.message})`}
-      </p>
-    </main>
+    <>
+      {/* Routes without a path only wrap their children in a layout (like nested layouts in ASP.NET). */}
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="store" element={<StorePage />} />
+          <Route path="product/:slug" element={<ProductPage />} />
+          <Route path="cart" element={<CartPage />} />
+          <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="orders/:id" element={<OrderDetailPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+        <Route element={<AuthLayout />}>
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+        </Route>
+      </Routes>
+      <WakeUpNotice />
+    </>
   )
 }
 

@@ -267,7 +267,7 @@ Each step is one or more small commits. Hours are rough estimates.
 **Sun 15 Nov, about 5–6 h**
 4. Entities + migration (including pg_trgm and the index) + `app:seed`.
 5. Frontend shell: `tokens.css`, Header (logo, search box, cart, login), Footer, routes, `api.ts`.
-6. Search: `ProductSearch`, `/api/search/suggest`, header dropdown.
+6. Search: `ProductSearch`, `/api/search/suggest`, header dropdown. On mobile, the full-width search bar becomes a search icon in the header row that opens it, like eneba.com (lowest priority, with the rest of the mobile polish).
 7. **Test: search.** `ProductSearchTest` runs a fixed list of typos and partial names (e.g. "minecarft", "cyberpnk", "witcher", "gta") against the seeded test database and asserts the expected product is in the results.
 8. Product page: `/api/products/{slug}` and the offers comparison UI. Add to cart.
 9. Auth: `User` and `ApiToken`, register/login/logout/me, `AuthContext`, login and register pages.

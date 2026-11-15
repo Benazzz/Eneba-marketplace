@@ -1,0 +1,11 @@
+/* Column layout so the footer sits at the bottom even when a page is short. */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+  padding-block: var(--space-8) var(--space-16);
+}

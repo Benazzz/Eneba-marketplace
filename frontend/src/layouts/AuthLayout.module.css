@@ -1,0 +1,24 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--color-bg-deep);
+}
+
+.header {
+  padding: var(--space-6);
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--gutter);
+}
+
+.footer {
+  padding: var(--space-6) var(--gutter);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
