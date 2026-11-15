@@ -6,6 +6,7 @@
   --color-header: #4618ac;
   --color-subnav: #341281; /* darker bar under the header */
   --color-surface: #5825cc; /* lighter panels (e.g. the product offer box) */
+  --color-dropdown: #4b1cb6; /* search results dropdown */
   --color-footer: #150733;
   --color-bg-deep: #1f0a4e; /* login / register background */
   --color-accent: #fad318; /* yellow call-to-action buttons */

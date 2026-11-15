@@ -13,3 +13,25 @@ export type ApiErrorBody = {
 export type HealthResponse = {
   status: 'ok'
 }
+
+/** Product summary used in lists (search dropdown, store grid, homepage rows). Money is in EUR cents. */
+export type ProductCard = {
+  id: number
+  slug: string
+  name: string
+  coverUrl: string
+  platform: string
+  region: string
+  /** Cheapest offer that still has stock. Null when every offer is sold out. */
+  fromPriceCents: number | null
+  msrpCents: number
+  /** 0–100, null when there is no price. */
+  discountPercent: number | null
+  /** Offers that still have stock. */
+  offerCount: number
+}
+
+/** GET /api/search/suggest?q=… */
+export type SearchSuggestResponse = {
+  items: ProductCard[]
+}

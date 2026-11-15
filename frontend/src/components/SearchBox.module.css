@@ -1,3 +1,8 @@
+/* The dropdown is positioned against this wrapper. */
+.root {
+  position: relative;
+}
+
 .box {
   display: flex;
   align-items: center;
@@ -38,6 +43,126 @@
   opacity: 1;
 }
 
+/* We draw our own clear button (as on eneba.com), so hide the browser's. */
+.input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.clear {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--color-text);
+}
+
+/* Dropdown, sampled from docs/design-reference/06-search-dropdown.png */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  max-height: min(640px, calc(100vh - 120px));
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-top: 0;
+  background: var(--color-dropdown);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+}
+
+.message {
+  padding: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.list {
+  transition: opacity var(--transition-fast);
+}
+
+/* Previous results while new ones load */
+.stale {
+  opacity: 0.6;
+}
+
+.option {
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.option:last-child {
+  border-bottom: 0;
+}
+
+.active {
+  background: var(--color-surface);
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+}
+
+.cover {
+  flex-shrink: 0;
+  width: 56px;
+  height: 78px;
+  object-fit: cover;
+  background: var(--color-subnav); /* shown while the image loads */
+}
+
+.info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.3;
+}
+
+.meta {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.price {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.from {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.amount {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.soldOut {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.seeAll {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
 @media (max-width: 767px) {
   .box {
     height: 44px;
@@ -45,5 +170,15 @@
 
   .input {
     font-size: var(--font-size-md);
+  }
+
+  .result {
+    gap: var(--space-3);
+    padding-inline: var(--space-3);
+  }
+
+  .cover {
+    width: 44px;
+    height: 62px;
   }
 }

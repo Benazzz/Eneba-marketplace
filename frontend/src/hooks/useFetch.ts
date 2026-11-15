@@ -11,7 +11,15 @@ type FetchResult<T> = {
   error: ApiError | null
 }
 
-export function useFetch<T>(path: string | null) {
+type Options = {
+  /**
+   * While a new path is loading, keep returning the last result (with isLoading: true) instead of null.
+   * The search dropdown uses it so the list doesn't flash empty between keystrokes.
+   */
+  keepPrevious?: boolean
+}
+
+export function useFetch<T>(path: string | null, { keepPrevious = false }: Options = {}) {
   const [result, setResult] = useState<FetchResult<T> | null>(null)
 
   useEffect(() => {
@@ -36,9 +44,11 @@ export function useFetch<T>(path: string | null) {
   // Loading isn't stored as state. It's worked out during render: there's no result for the current path yet.
   // That way the effect never has to call setState synchronously to say "loading started".
   const current = result?.path === path ? result : null
+  // With keepPrevious, an older path's data stands in until the new one arrives (never its error).
+  const shownData = current ? current.data : keepPrevious && path !== null ? (result?.data ?? null) : null
 
   return {
-    data: current?.data ?? null,
+    data: shownData,
     error: current?.error ?? null,
     isLoading: path !== null && current === null,
   }
