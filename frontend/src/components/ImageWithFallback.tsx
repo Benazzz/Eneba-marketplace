@@ -21,8 +21,15 @@ export function ImageWithFallback({ src, alt, label, className, loading }: Props
   if (failedSrc === src) {
     // The outer div takes the caller's class (size, radius). The inner one paints the placeholder, so a
     // background set by the caller's class can't cover it up.
+    // Same meaning as the <img>: with alt text it's an image with that name; with alt="" it's decorative
+    // (the name is already next to it), so screen readers skip it instead of reading the label twice.
     return (
-      <div className={className} role="img" aria-label={alt || undefined}>
+      <div
+        className={className}
+        role={alt ? 'img' : undefined}
+        aria-label={alt || undefined}
+        aria-hidden={alt ? undefined : true}
+      >
         <div className={styles.placeholder}>
           <span className={styles.label}>{label}</span>
         </div>

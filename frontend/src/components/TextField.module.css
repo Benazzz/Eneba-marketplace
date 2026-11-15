@@ -28,6 +28,11 @@
   border-color: var(--color-error);
 }
 
+/* An invalid field already has a red border, so focus thickens it; otherwise focus wouldn't show at all. */
+.invalid:focus {
+  box-shadow: inset 0 0 0 1px var(--color-error);
+}
+
 .error {
   color: var(--color-error);
   font-size: var(--font-size-xs);
