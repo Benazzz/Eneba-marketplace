@@ -25,6 +25,11 @@
   display: flex;
 }
 
+/* Mobile only (see the media query below) */
+.searchToggle {
+  display: none;
+}
+
 .account {
   display: flex;
   align-items: center;
@@ -69,7 +74,8 @@
   font-weight: var(--font-weight-medium);
 }
 
-/* Mobile: logo and icons on the first row, search on a full-width second row, icons only */
+/* Mobile: logo and icons on one row, icons only. The search icon opens the search bar as a
+   full-width second row, like eneba.com. */
 @media (max-width: 767px) {
   .top {
     flex-wrap: wrap;
@@ -79,8 +85,17 @@
   }
 
   .search {
+    display: none;
     order: 3;
     flex-basis: 100%;
+  }
+
+  .searchOpen {
+    display: block;
+  }
+
+  .searchToggle {
+    display: flex;
   }
 
   .actions {

@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CartIcon, UserIcon } from './icons'
+import { CartIcon, SearchIcon, UserIcon } from './icons'
 import { Logo } from './Logo'
 import { SearchBox } from './SearchBox'
 import styles from './Header.module.css'
@@ -7,13 +8,36 @@ import styles from './Header.module.css'
 // Shown on every page except login/register (see layouts/).
 // Wishlist and the language/currency switcher from eneba.com are left out (PLAN.md §1 cut list).
 export function Header() {
+  // Mobile only: the search bar is hidden behind a search icon, like on eneba.com (CSS decides what shows when).
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  // Focus the input once it's visible, so the keyboard opens right away.
+  useEffect(() => {
+    if (isMobileSearchOpen) searchInputRef.current?.focus()
+  }, [isMobileSearchOpen])
+
   return (
     <header className={styles.header}>
       <div className={`container ${styles.top}`}>
         <Logo />
-        <SearchBox className={styles.search} />
+        <SearchBox
+          className={`${styles.search} ${isMobileSearchOpen ? styles.searchOpen : ''}`}
+          inputRef={searchInputRef}
+          onDone={() => setIsMobileSearchOpen(false)}
+        />
 
         <nav className={styles.actions} aria-label="Cart and account">
+          <button
+            type="button"
+            className={styles.searchToggle}
+            aria-label="Search"
+            aria-expanded={isMobileSearchOpen}
+            onClick={() => setIsMobileSearchOpen((open) => !open)}
+          >
+            <SearchIcon size={26} />
+          </button>
+
           <Link to="/cart" className={styles.iconLink} aria-label="Cart">
             <CartIcon size={26} />
           </Link>
