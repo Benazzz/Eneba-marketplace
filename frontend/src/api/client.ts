@@ -23,11 +23,17 @@ export class ApiError extends Error {
   }
 }
 
-// Set by the auth context (build step 9) after login, and cleared on logout.
+// Set by AuthProvider after login (and on startup from localStorage), cleared on logout.
 let authToken: string | null = null
+// Called when the API rejects our token (expired or revoked), so AuthProvider can drop the session.
+let onUnauthorized: (() => void) | null = null
 
 export function setAuthToken(token: string | null) {
   authToken = token
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  onUnauthorized = handler
 }
 
 type RequestOptions = {
@@ -36,20 +42,29 @@ type RequestOptions = {
   body?: unknown
   /** Lets the caller cancel the request (e.g. when a component unmounts). */
   signal?: AbortSignal
+  /**
+   * Send the login token. Only for endpoints that need it (me, logout, checkout, orders). The API rejects a
+   * stale token with 401 on any route, so sending it everywhere could break public pages like the catalog.
+   */
+  auth?: boolean
 }
 
 /**
  * Calls the API and returns the parsed JSON body.
  * Throws ApiError for error statuses and network failures. An abort is rethrown unchanged (as AbortError).
  */
-export async function apiFetch<T>(path: string, { method = 'GET', body, signal }: RequestOptions = {}): Promise<T> {
+export async function apiFetch<T>(
+  path: string,
+  { method = 'GET', body, signal, auth = false }: RequestOptions = {},
+): Promise<T> {
   if (!API_URL) {
     throw new ApiError(0, 'config_error', 'VITE_API_URL is not set')
   }
 
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
-  if (authToken) headers.Authorization = `Bearer ${authToken}`
+  const sentToken = auth ? authToken : null
+  if (sentToken) headers.Authorization = `Bearer ${sentToken}`
 
   let response: Response
   markRequestStart()
@@ -74,6 +89,10 @@ export async function apiFetch<T>(path: string, { method = 'GET', body, signal }
   const data: unknown = await response.json().catch(() => null)
 
   if (!response.ok) {
+    // Our token was rejected: the session is over. Only if it's still the current token, so a late answer
+    // for an old token can't log out a session that started in the meantime.
+    if (response.status === 401 && sentToken && sentToken === authToken) onUnauthorized?.()
+
     const error = (data as ApiErrorBody | null)?.error
     throw new ApiError(
       response.status,

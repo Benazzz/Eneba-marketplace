@@ -17,9 +17,11 @@ type Options = {
    * The search dropdown uses it so the list doesn't flash empty between keystrokes.
    */
   keepPrevious?: boolean
+  /** Send the login token (for endpoints that need sign-in, e.g. orders). See apiFetch. */
+  auth?: boolean
 }
 
-export function useFetch<T>(path: string | null, { keepPrevious = false }: Options = {}) {
+export function useFetch<T>(path: string | null, { keepPrevious = false, auth = false }: Options = {}) {
   const [result, setResult] = useState<FetchResult<T> | null>(null)
 
   useEffect(() => {
@@ -28,7 +30,7 @@ export function useFetch<T>(path: string | null, { keepPrevious = false }: Optio
     // Cancels the request when the path changes or the component unmounts (StrictMode also mounts twice in dev).
     const controller = new AbortController()
 
-    apiFetch<T>(path, { signal: controller.signal })
+    apiFetch<T>(path, { signal: controller.signal, auth })
       .then((data) => {
         if (!controller.signal.aborted) setResult({ path, data, error: null })
       })
@@ -39,7 +41,7 @@ export function useFetch<T>(path: string | null, { keepPrevious = false }: Optio
       })
 
     return () => controller.abort()
-  }, [path])
+  }, [path, auth])
 
   // Loading isn't stored as state. It's worked out during render: there's no result for the current path yet.
   // That way the effect never has to call setState synchronously to say "loading started".

@@ -58,6 +58,20 @@ export type ProductDetail = ProductCard & {
   offers: Offer[]
 }
 
+/** GET /api/me, and the `user` part of a login/register response. */
+export type AuthUser = {
+  id: number
+  email: string
+}
+
+/** POST /api/auth/login and /api/auth/register. The token is shown only once, so the client keeps it. */
+export type AuthResponse = {
+  token: string
+  /** ISO 8601, 7 days after login */
+  expiresAt: string
+  user: AuthUser
+}
+
 /** GET /api/search/suggest?q=… */
 export type SearchSuggestResponse = {
   items: ProductCard[]

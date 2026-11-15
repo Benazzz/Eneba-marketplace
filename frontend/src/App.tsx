@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import type { HealthResponse } from './api/types'
+import { RequireAuth } from './components/RequireAuth'
 import { WakeUpNotice } from './components/WakeUpNotice'
 import { useFetch } from './hooks/useFetch'
 import { AuthLayout } from './layouts/AuthLayout'
@@ -29,9 +30,12 @@ function App() {
           <Route path="store" element={<StorePage />} />
           <Route path="product/:slug" element={<ProductPage />} />
           <Route path="cart" element={<CartPage />} />
-          <Route path="checkout" element={<CheckoutPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="orders/:id" element={<OrderDetailPage />} />
+          {/* Sign-in required (PLAN.md §6). */}
+          <Route element={<RequireAuth />}>
+            <Route path="checkout" element={<CheckoutPage />} />
+            <Route path="orders" element={<OrdersPage />} />
+            <Route path="orders/:id" element={<OrderDetailPage />} />
+          </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>
         <Route element={<AuthLayout />}>
