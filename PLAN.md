@@ -46,7 +46,7 @@ backend/
   src/Repository/
   src/Home/            BlockProviderInterface.php, Provider/{HeroBanner,BestSellers,Deals,NewReleases}Provider.php
   src/Search/          ProductSearch.php            (pg_trgm queries)
-  src/Checkout/        CheckoutService.php, PaymentSimulator.php
+  src/Checkout/        CheckoutService.php, PaymentSimulator.php, CartQuoter.php, OrderReader.php
   src/Security/        ApiTokenHandler.php          (Symfony access_token authenticator)
   src/Command/         SeedCommand.php              (app:seed --if-empty)
   migrations/
@@ -191,13 +191,13 @@ All JSON uses camelCase. Errors look like `{ "error": { "code": "validation_fail
 | `GET /api/products/filters` | none | `{ platforms: [{ value, count }], regions: [{ value, count }], price: { minCents, maxCents } }` |
 | `GET /api/products/{slug}` | none | `ProductDetail` (with `offers: Offer[]`: in-stock offers only, cheapest first) / `404 not_found` |
 | `GET /api/search/suggest` | `q` (≥2 chars) | `{ items: ProductCard[] }` (max 8) |
-| `POST /api/cart/quote` | `{ items: [{ offerId, quantity }] }` | `{ lines: [{ offer, product, quantity, lineTotalCents, available }], totalCents }` |
+| `POST /api/cart/quote` | `{ items: [{ offerId, quantity }] }` (1–50 items, quantity 1–100, duplicate offers merged) | `{ lines: CartQuoteLine[], totalCents }`. Sold-out lines stay with `available: 0`. Unknown offer IDs are left out (Decision 24) |
 | `POST /api/auth/register` | `{ email, password }` (password ≥ 8 chars) | `201 { token, expiresAt, user }` / `422 validation_failed` / `409 email_taken` (both with `fields.email` / `fields.password`) |
 | `POST /api/auth/login` | `{ email, password }` | `200 { token, expiresAt, user }` / `401 invalid_credentials` (same for unknown email and wrong password) |
 | `POST /api/auth/logout` 🔒 | none | `204` (deletes the token) |
 | `GET /api/me` 🔒 | none | `{ id, email }` |
-| `POST /api/checkout` 🔒 | `{ items: [{ offerId, quantity }], card: { number, expiry, cvc, name } }` | `201 Order` (with keys) / `402 card_declined` / `409 out_of_stock` |
-| `GET /api/orders` 🔒 | none | `{ items: OrderSummary[] }` |
+| `POST /api/checkout` 🔒 | `{ items: [{ offerId, quantity }], card: { number (digits only), expiry "MM/YY", cvc, name } }` | `201 Order` (with keys) / `402 card_declined` / `409 out_of_stock` (with `offerId`, message names the item) / `422 validation_failed` (`fields["card.number"]` …) |
+| `GET /api/orders` 🔒 | none | `{ items: OrderSummary[] }`, newest first |
 | `GET /api/orders/{id}` 🔒 | none | `Order` with keys (`404` if it isn't the caller's order) |
 
 Shapes:
@@ -205,7 +205,9 @@ Shapes:
 - `ProductDetail = ProductCard + { description, releaseDate, offers }`
 - `Offer = { id, priceCents, discountPercent, stock, seller: { id, name, rating, verified } }`
 - `Banner = { id, title, subtitle, imageUrl, linkUrl }`
-- `Order = { id, createdAt, totalCents, cardLast4, items: [{ productName, unitPriceCents, quantity, keys: string[] }] }`
+- `CartQuoteLine = { offer: { id, priceCents, discountPercent, seller }, product: { id, slug, name, coverUrl, platform, region }, quantity, lineTotalCents, available }`. `available` = keys in stock now (a number).
+- `Order = { id, createdAt, totalCents, cardLast4, items: [{ productName, productSlug, coverUrl, unitPriceCents, quantity, keys: string[] }] }`. `productName` and `unitPriceCents` are the snapshots. Slug and cover come from the current product, for the link and image.
+- `OrderSummary = { id, createdAt, totalCents, items: [{ productName, quantity }] }` (no keys)
 
 ## 5. Search
 
@@ -230,15 +232,17 @@ Shapes:
 ## 7. Cart, checkout and payment
 
 - **Cart** lives in `localStorage` as `[{ offerId, quantity }]` only. The cart page calls `POST /api/cart/quote` to show real prices and stock from the backend. The browser is never trusted for prices.
-- **Payment simulation** (`PaymentSimulator`): a basic check of card format and expiry. `4242 4242 4242 4242` succeeds, `4000 0000 0000 0002` returns `402 card_declined`. Only the last 4 digits are stored.
-- **Checkout (`CheckoutService`), all in one DB transaction:**
+- **The cart page** shows each line's state from the quote: "Sold out" (`available: 0`) or "Only N left" (quantity above `available`). "Proceed to checkout" stays disabled until those lines are fixed. Offers the API doesn't know are removed from the cart with a notice.
+- **Payment simulation** (`PaymentSimulator`): the format of the card fields is checked in `CardInput` (422 with per-field messages, including an expired card). Only the two test cards are accepted (Decision 26): `4242 4242 4242 4242` succeeds, `4000 0000 0000 0002` returns `402 card_declined`. Only the last 4 digits are stored. The number and CVC are marked `#[\SensitiveParameter]` (PHP hides them in stack traces), and no error message repeats the input, so the full number never reaches a log. A test checks this.
+- **Checkout (`CheckoutService`), all in one DB transaction** (opened on the DBAL connection, because `$em->wrapInTransaction()` closes the EntityManager on any exception):
   1. Reload offers and prices from the DB.
   2. For each line: `SELECT id FROM game_key WHERE offer_id = :offer AND status = 'available' ORDER BY id LIMIT :qty FOR UPDATE SKIP LOCKED`. If fewer rows come back than requested, roll back and return `409 out_of_stock`.
-  3. Create the `orders` and `order_item` rows (price snapshots).
-  4. `UPDATE game_key SET status='sold', order_item_id=…, sold_at=now() WHERE id IN (…) AND status='available'`, and check that the number of affected rows equals what was requested (a second safety net).
-  5. Commit and return the order with its keys.
-- `FOR UPDATE` locks the chosen key rows, so two checkouts running at the same time can never take the same key. `SKIP LOCKED` makes the second checkout take the *next* free keys instead of waiting.
-- After a successful checkout the frontend clears the cart and goes to `/orders/{id}`, where the keys are shown with copy buttons.
+  3. Charge the card for the total from DB prices. A decline rolls back (the key locks are released) and returns `402` (Decision 25).
+  4. Create the `orders` and `order_item` rows (price snapshots).
+  5. `UPDATE game_key SET status='sold', order_item_id=…, sold_at=now() WHERE id IN (…) AND status='available'`, and check that the number of affected rows equals what was requested (a second safety net).
+  6. Commit and return the order with its keys (read back from the DB by `OrderReader`).
+- `FOR UPDATE` locks the chosen key rows, so two checkouts running at the same time can never take the same key. `SKIP LOCKED` makes the second checkout take the *next* free keys instead of waiting, so checkouts never wait on each other and can't deadlock.
+- After a successful checkout the frontend clears the cart and goes to `/orders/{id}`, where the keys are shown with copy buttons. On `402` the card form shows the message and the cart stays as it was. On `409` the buyer is sent back to the cart with a message naming the item.
 
 ## 8. Database and hosting
 
@@ -278,7 +282,7 @@ Each step is one or more small commits. Hours are rough estimates.
 
 **Mon 16 Nov, about 5–6 h**
 10. Cart page + quote, checkout page + `CheckoutService` + simulated payment, order page with keys, order history.
-11. **Test: checkout.** `CheckoutServiceTest`: (a) the same key is never sold twice: buying all of an offer's keys, then buying again, gives no duplicate key codes across orders; (b) the out-of-stock case: asking for more keys than are available returns `409 out_of_stock` (through `POST /api/checkout`), and no order or key change is saved.
+11. **Test: checkout.** `CheckoutServiceTest`: (a) the same key is never sold twice: buying all of an offer's keys, then buying again, gives no duplicate key codes across orders; (b) the out-of-stock case: asking for more keys than are available returns `409 out_of_stock` (through `POST /api/checkout`), and no order or key change is saved; (c) a declined card returns `402` and saves nothing; (d) the full card number appears in no log record (a 422 and a 402 request). Each test runs inside a transaction that is rolled back (Decision 27).
 12. Store page: `/api/products` with filters, sort and pagination, plus `/api/products/filters`.
 13. Homepage: `home_block`/`banner`, providers, block endpoints, block components.
 14. Styling pass against the screenshots, basic responsive layout, loading/error states.
@@ -327,3 +331,7 @@ If behind schedule, drop items from the bottom of the priority list in §1 (New-
 | 21 | **Session (token + user) cached in `localStorage`, checked by `/api/me` in the background** | The header and `RequireAuth` know the user instantly on reload, even while the free Render API is still waking up (up to a minute). Blocking on `/me` would show a logged-out page or a long spinner. If the token turns out to be invalid, the 401 handler logs out. A network error keeps the session. |
 | 22 | **Login: one generic message, plus a dummy hash for unknown emails** | Required: a wrong login must not reveal whether the email exists. Hashing is deliberately slow (~50–100 ms), so without the dummy hash an unknown email would answer measurably faster. Register still has to say "email already exists", which is accepted, as on most sites. |
 | 23 | **`#[MapRequestPayload]` + one `ApiExceptionSubscriber`. Token sent only where needed** | DTO + constraints is the Symfony equivalent of `[FromBody]` + DataAnnotations, and one subscriber gives every endpoint the same error format (`fields` per input). Symfony ignores `lazy` on a stateless firewall, so a stale token would get 401 even on the catalog (standard Bearer behavior, RFC 6750). The frontend therefore attaches the token only to protected endpoints. |
+| 24 | **Cart quote: `available` is a number, and sold-out lines are kept** | The cart reserves nothing, so an offer can sell out while it sits in a cart. A number lets the cart say "Only 1 left" and cap the quantity. Keeping sold-out lines with `available: 0` means an item never silently vanishes: the buyer sees "Sold out" and removes it. Checkout's `409 out_of_stock` stays the final safety net. |
+| 25 | **The charge happens inside the transaction, after the keys are locked** | The buyer is never charged for keys that aren't there, and a decline simply rolls back. That's fine here because the simulated charge is instant. With a real payment provider I wouldn't hold row locks during a slow network call: I'd reserve the keys with an expiry (e.g. `status = 'reserved'`, `reserved_until`), charge outside the transaction, then confirm the sale or release the keys. |
+| 26 | **Only the two test cards are accepted** (any other number → `422`) | A demo shop must not nudge anyone to type a real card number. It also keeps the demo predictable: one card succeeds, one is declined. Only `card_last4` is stored, the number and CVC are `#[\SensitiveParameter]`, and no message repeats the input. |
+| 27 | **Checkout tests run in a rolled-back transaction**, with their own fixture data | No extra package (such as dama/doctrine-test-bundle) is needed. `disableReboot()` keeps one DB connection for all requests in a test, and the service's own transaction becomes a savepoint. The tests don't use up the seeded stock that `ProductSearchTest` relies on, and they don't depend on it. In the test env the logger is an in-memory one, so a test can read every log record. |
