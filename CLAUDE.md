@@ -6,7 +6,7 @@ Eneba 2027 internship assignment (7-day deadline): a digital-key marketplace web
 Specs are intentionally vague. We choose the scope and must be able to justify it, and a few features done well beat many minimal ones.
 The author must be able to explain every line of code.
 
-- Assignment: `docs/assignment.pdf`
+- Assignment: summarized in this file (the original PDF isn't in the repo)
 - Design reference (eneba.com screenshots, desktop and mobile): `docs/design-reference/`
 - Detailed plan: `PLAN.md` (scope, architecture, data model, API, build order, decisions with reasons). Read it before starting work.
 
