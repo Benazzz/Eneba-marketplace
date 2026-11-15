@@ -21,3 +21,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+when@test:
+    services:
+        # In tests, every log record is kept in memory instead of written out, so CheckoutServiceTest can
+        # check that a card number never reaches the logs. The class lives in tests/ (autoload-dev).
+        logger:
+            class: App\Tests\Support\InMemoryLogger
+            public: true
