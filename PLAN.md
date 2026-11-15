@@ -79,8 +79,8 @@ docs/  PLAN.md  README.md  CLAUDE.md  .gitattributes
 
 ```mermaid
 erDiagram
-  USER ||--o{ API_TOKEN : "signs in with"
-  USER ||--o{ ORDERS : places
+  USERS ||--o{ API_TOKEN : "signs in with"
+  USERS ||--o{ ORDERS : places
   ORDERS ||--|{ ORDER_ITEM : contains
   PRODUCT ||--o{ OFFER : "is sold as"
   SELLER ||--o{ OFFER : lists
@@ -88,7 +88,7 @@ erDiagram
   OFFER ||--o{ ORDER_ITEM : "bought via"
   ORDER_ITEM ||--o{ GAME_KEY : delivers
 
-  USER {
+  USERS {
     int id PK
     string email UK
     string password "hashed by Symfony password hasher"
@@ -166,6 +166,17 @@ erDiagram
 ```
 
 Notes: money is stored as integer cents in EUR (no float rounding). Stock = the number of `available` keys on an offer. A product's "From" price = its cheapest offer that still has stock. The seed creates about 50 products, 8 sellers, 2–5 offers per product, a few keys per offer, banners, the block layout and some past orders so the best-sellers block isn't empty.
+
+Table names: `users` and `orders` (not `user` / `order`), because both are reserved words in PostgreSQL and would need quoting in every native SQL query. The PHP entities are still `User` and `Order`.
+
+Constraints beyond the diagram:
+- `offer`: unique `(product_id, seller_id)`, so a seller lists a product only once.
+- `game_key`: unique `code`, and an index on `(offer_id, status)` for the checkout query that picks available keys.
+- `game_key.status` is a PHP backed enum (`KeyStatus`), stored as a string.
+- `seller.rating` is `numeric(3,2)`.
+- `api_token.user_id` uses `ON DELETE CASCADE`.
+
+Demo account (created by the seed, listed in the README): `demo@example.com` / `demo12345`. It already has 3 past orders.
 
 ## 4. REST API
 
@@ -304,3 +315,5 @@ If behind schedule, drop items from the bottom of the priority list in §1 (New-
 | 13 | **Monorepo, money in integer cents, Symfony 7.4 LTS** | One repo to submit. Integers avoid float rounding errors. LTS has the most documentation. |
 | 14 | **Local Postgres via Docker Compose** (`backend/compose.yaml`, `postgres:17-alpine`) | Docker is already installed. Same major version as Neon, and pg_trgm is included. One container holds both `app` and `app_test` (Doctrine adds the `_test` suffix in the test env). `docker compose down -v` gives a clean reset. A native Windows install is heavier and hard to reset. Neon branches for dev/tests need internet and make tests slow and flaky. |
 | 15 | **No Symfony CLI** | One less tool to install. PHP's built-in server (`php -S localhost:8000 -t public`) and Composer cover everything, and they're easier to explain. |
+| 16 | **`users` table name** (not `user`) | `user` is a reserved word in PostgreSQL, so every native SQL query would need `"user"` in quotes. This matches `orders`. |
+| 17 | **Seed is deterministic, all-or-nothing, never overwrites** | A fixed random seed gives every environment (local, test, Neon) the same data, so the search test can rely on it. One transaction means a crash leaves the DB empty and the next boot retries. `--if-empty` skips when products exist. Without the flag, the command refuses to run on a non-empty DB. Demo user `demo@example.com` / `demo12345` so reviewers can sign in right away. |
