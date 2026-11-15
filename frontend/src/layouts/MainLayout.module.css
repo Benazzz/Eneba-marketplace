@@ -3,6 +3,9 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  /* The homepage hero spans 100vw, which includes the scrollbar, so it's a few pixels wider than the page.
+     clip (unlike hidden) cuts that off without making this a scroll container, so nothing else changes. */
+  overflow-x: clip;
 }
 
 .main {
