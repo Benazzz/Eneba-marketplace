@@ -1,0 +1,55 @@
+/* Design tokens. Colors are sampled from the eneba.com screenshots in docs/design-reference/.
+   Components use these variables instead of raw values, so the look can be tuned in one place. */
+:root {
+  /* Colors */
+  --color-bg: #4618ac; /* page and header purple */
+  --color-header: #4618ac;
+  --color-subnav: #341281; /* darker bar under the header */
+  --color-surface: #5825cc; /* lighter panels (e.g. the product offer box) */
+  --color-footer: #150733;
+  --color-bg-deep: #1f0a4e; /* login / register background */
+  --color-accent: #fad318; /* yellow call-to-action buttons */
+  --color-accent-text: #1f0a4e; /* text on yellow */
+  --color-positive: #7ee916; /* green price / cashback highlights */
+  --color-text: #ffffff;
+  --color-text-muted: #aa95d9; /* search placeholder, secondary text */
+  --color-text-soft: rgb(255 255 255 / 0.8); /* footer links and small print */
+  --color-border: #ffffff;
+  --color-border-subtle: rgb(255 255 255 / 0.15);
+
+  /* Typography (Metropolis is self-hosted, see global.css) */
+  --font-family: metropolis, arial, helvetica, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-xxl: 32px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Spacing: a 4px scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Layout. The mobile breakpoint is 768px. It's written as a literal in media queries,
+     because CSS variables can't be used inside @media. */
+  --container-width: 1200px;
+  --gutter: 16px;
+  --header-height: 95px;
+  --subnav-height: 50px;
+  --search-height: 56px;
+
+  --transition-fast: 150ms ease;
+}
