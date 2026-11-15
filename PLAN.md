@@ -192,8 +192,8 @@ All JSON uses camelCase. Errors look like `{ "error": { "code": "validation_fail
 | `GET /api/products/{slug}` | none | `ProductDetail` (with `offers: Offer[]`: in-stock offers only, cheapest first) / `404 not_found` |
 | `GET /api/search/suggest` | `q` (≥2 chars) | `{ items: ProductCard[] }` (max 8) |
 | `POST /api/cart/quote` | `{ items: [{ offerId, quantity }] }` | `{ lines: [{ offer, product, quantity, lineTotalCents, available }], totalCents }` |
-| `POST /api/auth/register` | `{ email, password }` (password ≥ 8 chars) | `201 { token, expiresAt, user }` |
-| `POST /api/auth/login` | `{ email, password }` | `200 { token, expiresAt, user }` / `401` |
+| `POST /api/auth/register` | `{ email, password }` (password ≥ 8 chars) | `201 { token, expiresAt, user }` / `422 validation_failed` / `409 email_taken` (both with `fields.email` / `fields.password`) |
+| `POST /api/auth/login` | `{ email, password }` | `200 { token, expiresAt, user }` / `401 invalid_credentials` (same for unknown email and wrong password) |
 | `POST /api/auth/logout` 🔒 | none | `204` (deletes the token) |
 | `GET /api/me` 🔒 | none | `{ id, email }` |
 | `POST /api/checkout` 🔒 | `{ items: [{ offerId, quantity }], card: { number, expiry, cvc, name } }` | `201 Order` (with keys) / `402 card_declined` / `409 out_of_stock` |
@@ -219,9 +219,13 @@ Shapes:
 - Symfony's built-in `access_token` authenticator with a custom `ApiTokenHandler`. No extra bundle.
 - On login or register: generate 32 random bytes, return the raw token **once**, and store only its `sha256` hash with `expires_at` (7 days). The handler hashes the incoming token, looks it up, and rejects it if missing or expired.
 - Passwords are hashed with Symfony's `UserPasswordHasherInterface` (`auto` = bcrypt/argon2id), similar to ASP.NET Identity's `PasswordHasher`.
-- Logout deletes the token row, so the token is revoked right away.
-- Frontend: the token is kept in `localStorage`, `AuthContext` exposes `user` / `login` / `logout`, and `<RequireAuth>` sends guests to `/login?next=…` before checkout, orders and order details.
-- `security.yaml`: `^/api/(checkout|orders|me|auth/logout)` require `ROLE_USER`. Everything else is public.
+- Logout deletes the token row, so the token is revoked right away. Issuing a token also deletes that user's expired ones.
+- Login gives one generic `401` ("Wrong email or password.") and runs a password hash even for unknown emails, so neither the message nor the response time reveals whether an email is registered (Decision 22).
+- `security.yaml`: one stateless firewall on `^/api` with the `access_token` authenticator. `^/api/(checkout|orders|me|auth/logout)(/|$)` require `ROLE_USER`. Everything else is public. `ApiAuthErrorResponder` (entry point + failure handler) makes every 401 a JSON error in the §4 format.
+- Request bodies: `#[MapRequestPayload]` DTOs with validator constraints. `ApiExceptionSubscriber` turns their errors (and any other HTTP error on `/api`) into the §4 error format (Decision 23).
+- Frontend: `localStorage['auth'] = { token, expiresAt, user }`. `AuthProvider` exposes `user` / `login` / `register` / `logout` through `useAuth()`. The saved user shows immediately on load, and a background `GET /api/me` checks the token (Decision 21). A 401 on any request that sent the token logs out locally, and the `storage` event keeps tabs in sync.
+- The token is sent only to endpoints that need it (`apiFetch(…, { auth: true })`), because a stateless firewall rejects a bad token with 401 on every route (Decision 23).
+- `<RequireAuth>` sends guests to `/login?next=…` before checkout, orders and order details. `safeNext()` only accepts in-app paths (no open redirect).
 
 ## 7. Cart, checkout and payment
 
@@ -320,3 +324,6 @@ If behind schedule, drop items from the bottom of the priority list in §1 (New-
 | 18 | **Search word-similarity threshold 0.5** | Measured on the seed. Postgres's default of 0.6 misses "minecarft" (0.50). 0.4 would add "wticher" (0.40), but also irrelevant hits for games we don't sell: halo → Hades, fifa → Split Fiction, sims → Sid Meier's. 0.3 adds wrong games to real queries ("eldn ring" also returns Skyrim). Known cost at 0.5: "mario" → Marvel's Spider-Man (also exactly 0.50). The test checks both directions. |
 | 19 | **Product page lists only in-stock offers**, cheapest first | Same as eneba.com, and consistent with `ProductCard`, whose `offerCount` and "From" price already count only in-stock offers (`offerCount === offers.length`, featured offer = `offers[0]`). A fully sold-out product still returns `200` with `offers: []`, and the page shows "Out of stock" instead of the buy buttons. Each offer carries its own `discountPercent`, so the discount formula stays in the backend (`ProductCard::discountPercent`). |
 | 20 | **`useCart` reads a module-level store through `useSyncExternalStore`** | Every component (header badge, product page, cart page) sees the same cart without a Context Provider, and other open tabs stay in sync through the `storage` event. Corrupt or blocked `localStorage` means an empty cart, not a crash. |
+| 21 | **Session (token + user) cached in `localStorage`, checked by `/api/me` in the background** | The header and `RequireAuth` know the user instantly on reload, even while the free Render API is still waking up (up to a minute). Blocking on `/me` would show a logged-out page or a long spinner. If the token turns out to be invalid, the 401 handler logs out. A network error keeps the session. |
+| 22 | **Login: one generic message, plus a dummy hash for unknown emails** | Required: a wrong login must not reveal whether the email exists. Hashing is deliberately slow (~50–100 ms), so without the dummy hash an unknown email would answer measurably faster. Register still has to say "email already exists", which is accepted, as on most sites. |
+| 23 | **`#[MapRequestPayload]` + one `ApiExceptionSubscriber`. Token sent only where needed** | DTO + constraints is the Symfony equivalent of `[FromBody]` + DataAnnotations, and one subscriber gives every endpoint the same error format (`fields` per input). Symfony ignores `lazy` on a stateless firewall, so a stale token would get 401 even on the catalog (standard Bearer behavior, RFC 6750). The frontend therefore attaches the token only to protected endpoints. |
