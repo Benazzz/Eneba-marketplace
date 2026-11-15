@@ -1,0 +1,105 @@
+/* Shared by LoginPage and RegisterPage: the purple form card from 10-login.png / 11-register.png */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 380px;
+  padding: var(--space-10);
+  background: var(--color-card);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+}
+
+.subtitle {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.subtitle a {
+  color: var(--color-accent);
+}
+
+.subtitle a:hover {
+  text-decoration: underline;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* "Show password" text button */
+.toggle {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.toggle:hover {
+  text-decoration: underline;
+}
+
+/* Password rule list with a circle that fills when the rule is met */
+.rules {
+  margin-block: var(--space-2);
+  font-size: var(--font-size-xs);
+}
+
+.rule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rule::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--color-text-muted);
+  border-radius: 50%;
+  transition: background var(--transition-fast);
+}
+
+.ruleMet::before {
+  border-color: var(--color-positive);
+  background: var(--color-positive);
+}
+
+/* One message for the whole form, e.g. "Wrong email or password." */
+.formError {
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--color-error);
+  background: rgb(255 107 122 / 0.12);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.submit {
+  height: 36px;
+  margin-top: var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  transition: filter var(--transition-fast);
+}
+
+.submit:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}

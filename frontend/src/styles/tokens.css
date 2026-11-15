@@ -9,6 +9,9 @@
   --color-dropdown: #4b1cb6; /* search results dropdown */
   --color-footer: #150733;
   --color-bg-deep: #1f0a4e; /* login / register background */
+  --color-card: #4a1cb3; /* login / register form card */
+  --color-input: #3d1699; /* text inputs on the form card */
+  --color-error: #ff6b7a; /* field errors */
   --color-accent: #fad318; /* yellow call-to-action buttons */
   --color-accent-text: #1f0a4e; /* text on yellow */
   --color-positive: #7ee916; /* green price / cashback highlights */

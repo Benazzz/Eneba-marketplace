@@ -9,16 +9,39 @@
   padding: var(--space-6);
 }
 
+/* Greeting on the left, form card on the right */
 .main {
   display: flex;
   flex: 1;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+  width: 100%;
+  max-width: calc(1440px + 2 * var(--gutter));
+  margin-inline: auto;
   padding: var(--space-8) var(--gutter);
+}
+
+.greeting {
+  padding-left: 5%;
+  font-size: clamp(48px, 5.5vw, 88px);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.05;
 }
 
 .footer {
   padding: var(--space-6) var(--gutter);
   font-size: var(--font-size-sm);
   text-align: center;
+}
+
+/* Small screens: only the form, centered */
+@media (max-width: 1023px) {
+  .main {
+    justify-content: center;
+  }
+
+  .greeting {
+    display: none;
+  }
 }
