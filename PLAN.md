@@ -210,7 +210,7 @@ Shapes:
 ## 5. Search
 
 - A migration enables `CREATE EXTENSION pg_trgm` and adds a GIN index `gin_trgm_ops` on `lower(name)`.
-- The query runs as native SQL in `ProductSearch`: it matches when `lower(name) ILIKE '%' || q || '%'` (partial names) **or** when `q <% lower(name)` (word similarity, which handles typos such as "minecarft" or "cyberpnk"). Ordering: prefix matches first, then by `word_similarity` descending, then by popularity. The threshold starts at about 0.3 and is tuned against a list of test typos.
+- The query runs as native SQL in `ProductSearch`: it matches when `lower(name) ILIKE '%' || q || '%'` (partial names) **or** when `q <% lower(name)` (word similarity, which handles typos such as "minecarft" or "cyberpnk"). Ordering: prefix matches first, then by `word_similarity` descending, then by popularity. The word-similarity threshold is **0.5**, tuned against the typo list in `ProductSearchTest` (Decision 18). It is set per query with `set_config(..., true)` inside a transaction.
 - The same function backs `/api/search/suggest` (top 8) and the `q` filter in `/api/products`, so the dropdown and the store always agree.
 - **Dropdown (header, on every page):** 250 ms debounce, `AbortController` cancels outdated requests, results show cover, name, platform/region and "From" price. Keyboard: ↑/↓/Enter/Esc. "See all results" goes to `/store?q=…`. Empty and error states are handled.
 
@@ -317,3 +317,4 @@ If behind schedule, drop items from the bottom of the priority list in §1 (New-
 | 15 | **No Symfony CLI** | One less tool to install. PHP's built-in server (`php -S localhost:8000 -t public`) and Composer cover everything, and they're easier to explain. |
 | 16 | **`users` table name** (not `user`) | `user` is a reserved word in PostgreSQL, so every native SQL query would need `"user"` in quotes. This matches `orders`. |
 | 17 | **Seed is deterministic, all-or-nothing, never overwrites** | A fixed random seed gives every environment (local, test, Neon) the same data, so the search test can rely on it. One transaction means a crash leaves the DB empty and the next boot retries. `--if-empty` skips when products exist. Without the flag, the command refuses to run on a non-empty DB. Demo user `demo@example.com` / `demo12345` so reviewers can sign in right away. |
+| 18 | **Search word-similarity threshold 0.5** | Measured on the seed. Postgres's default of 0.6 misses "minecarft" (0.50). 0.4 would add "wticher" (0.40), but also irrelevant hits for games we don't sell: halo → Hades, fifa → Split Fiction, sims → Sid Meier's. 0.3 adds wrong games to real queries ("eldn ring" also returns Skyrim). Known cost at 0.5: "mario" → Marvel's Spider-Man (also exactly 0.50). The test checks both directions. |

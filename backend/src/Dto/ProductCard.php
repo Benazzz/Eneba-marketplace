@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Dto;
+
+/**
+ * The product summary used in lists: search dropdown, store grid, homepage rows (PLAN.md §4).
+ *
+ * A read-only data object, like a C# record. json_encode() writes its public properties
+ * as JSON keys, so the property names are the API's camelCase field names.
+ */
+final readonly class ProductCard
+{
+    public function __construct(
+        public int $id,
+        public string $slug,
+        public string $name,
+        public string $coverUrl,
+        public string $platform,
+        public string $region,
+        /** Cheapest offer that still has stock. Null when every offer is sold out. */
+        public ?int $fromPriceCents,
+        public int $msrpCents,
+        /** How far the "From" price is below MSRP, 0–100. Null when there is no price. */
+        public ?int $discountPercent,
+        /** Number of offers that still have stock. */
+        public int $offerCount,
+    ) {
+    }
+
+    /**
+     * Builds a card from a native SQL row with the columns id, slug, name, cover_url, platform,
+     * region, msrp_cents, from_price_cents and offer_count.
+     *
+     * @param array<string, mixed> $row
+     */
+    public static function fromRow(array $row): self
+    {
+        $msrpCents = (int) $row['msrp_cents'];
+        $fromPriceCents = $row['from_price_cents'] === null ? null : (int) $row['from_price_cents'];
+
+        $discountPercent = null;
+        if ($fromPriceCents !== null && $msrpCents > 0) {
+            // Some sellers price above MSRP; that's "no discount", not a negative one.
+            $discountPercent = max(0, (int) round(($msrpCents - $fromPriceCents) * 100 / $msrpCents));
+        }
+
+        return new self(
+            id: (int) $row['id'],
+            slug: $row['slug'],
+            name: $row['name'],
+            coverUrl: $row['cover_url'],
+            platform: $row['platform'],
+            region: $row['region'],
+            fromPriceCents: $fromPriceCents,
+            msrpCents: $msrpCents,
+            discountPercent: $discountPercent,
+            offerCount: (int) $row['offer_count'],
+        );
+    }
+}
