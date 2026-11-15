@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useCart } from '../hooks/useCart'
 import { CartIcon, SearchIcon, UserIcon } from './icons'
 import { Logo } from './Logo'
 import { SearchBox } from './SearchBox'
@@ -11,6 +12,7 @@ export function Header() {
   // Mobile only: the search bar is hidden behind a search icon, like on eneba.com (CSS decides what shows when).
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const { count: cartCount } = useCart()
 
   // Focus the input once it's visible, so the keyboard opens right away.
   useEffect(() => {
@@ -38,8 +40,13 @@ export function Header() {
             <SearchIcon size={26} />
           </button>
 
-          <Link to="/cart" className={styles.iconLink} aria-label="Cart">
+          <Link to="/cart" className={styles.iconLink} aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : 'Cart'}>
             <CartIcon size={26} />
+            {cartCount > 0 && (
+              <span className={styles.badge} aria-hidden="true">
+                {cartCount > 99 ? '99+' : cartCount}
+              </span>
+            )}
           </Link>
 
           <div className={styles.account}>

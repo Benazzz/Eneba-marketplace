@@ -5,6 +5,7 @@ import { useDebounce } from '../hooks/useDebounce'
 import { useFetch } from '../hooks/useFetch'
 import { formatPrice } from '../utils/formatPrice'
 import { CloseIcon, SearchIcon } from './icons'
+import { ImageWithFallback } from './ImageWithFallback'
 import styles from './SearchBox.module.css'
 
 const MIN_LENGTH = 2 // the API returns nothing for shorter queries
@@ -195,7 +196,13 @@ export function SearchBox({ className, inputRef, onDone }: Props) {
                     className={styles.result}
                     onClick={closeAfterProductPick}
                   >
-                    <img src={product.coverUrl} alt="" loading="lazy" className={styles.cover} />
+                    <ImageWithFallback
+                      src={product.coverUrl}
+                      alt=""
+                      label={product.name}
+                      loading="lazy"
+                      className={styles.cover}
+                    />
                     <span className={styles.info}>
                       <span className={styles.name}>{product.name}</span>
                       <span className={styles.meta}>
