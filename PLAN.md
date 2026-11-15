@@ -189,7 +189,7 @@ All JSON uses camelCase. Errors look like `{ "error": { "code": "validation_fail
 | `GET /api/home/blocks/{id}` | none | `{ id, type, title, items: Banner[] \| ProductCard[] }` |
 | `GET /api/products` | `q`, `platform[]`, `region[]`, `minPrice`, `maxPrice` (cents), `sort` = `popular\|price_asc\|price_desc\|discount\|newest`, `page`, `limit` (≤48, default 24) | `{ items: ProductCard[], total, page, pages }` |
 | `GET /api/products/filters` | none | `{ platforms: [{ value, count }], regions: [{ value, count }], price: { minCents, maxCents } }` |
-| `GET /api/products/{slug}` | none | `ProductDetail` (with `offers: Offer[]` sorted by price, cheapest first) |
+| `GET /api/products/{slug}` | none | `ProductDetail` (with `offers: Offer[]`: in-stock offers only, cheapest first) / `404 not_found` |
 | `GET /api/search/suggest` | `q` (≥2 chars) | `{ items: ProductCard[] }` (max 8) |
 | `POST /api/cart/quote` | `{ items: [{ offerId, quantity }] }` | `{ lines: [{ offer, product, quantity, lineTotalCents, available }], totalCents }` |
 | `POST /api/auth/register` | `{ email, password }` (password ≥ 8 chars) | `201 { token, expiresAt, user }` |
@@ -203,7 +203,7 @@ All JSON uses camelCase. Errors look like `{ "error": { "code": "validation_fail
 Shapes:
 - `ProductCard = { id, slug, name, coverUrl, platform, region, fromPriceCents, msrpCents, discountPercent, offerCount }`
 - `ProductDetail = ProductCard + { description, releaseDate, offers }`
-- `Offer = { id, priceCents, stock, seller: { id, name, rating, verified } }`
+- `Offer = { id, priceCents, discountPercent, stock, seller: { id, name, rating, verified } }`
 - `Banner = { id, title, subtitle, imageUrl, linkUrl }`
 - `Order = { id, createdAt, totalCents, cardLast4, items: [{ productName, unitPriceCents, quantity, keys: string[] }] }`
 
@@ -318,3 +318,5 @@ If behind schedule, drop items from the bottom of the priority list in §1 (New-
 | 16 | **`users` table name** (not `user`) | `user` is a reserved word in PostgreSQL, so every native SQL query would need `"user"` in quotes. This matches `orders`. |
 | 17 | **Seed is deterministic, all-or-nothing, never overwrites** | A fixed random seed gives every environment (local, test, Neon) the same data, so the search test can rely on it. One transaction means a crash leaves the DB empty and the next boot retries. `--if-empty` skips when products exist. Without the flag, the command refuses to run on a non-empty DB. Demo user `demo@example.com` / `demo12345` so reviewers can sign in right away. |
 | 18 | **Search word-similarity threshold 0.5** | Measured on the seed. Postgres's default of 0.6 misses "minecarft" (0.50). 0.4 would add "wticher" (0.40), but also irrelevant hits for games we don't sell: halo → Hades, fifa → Split Fiction, sims → Sid Meier's. 0.3 adds wrong games to real queries ("eldn ring" also returns Skyrim). Known cost at 0.5: "mario" → Marvel's Spider-Man (also exactly 0.50). The test checks both directions. |
+| 19 | **Product page lists only in-stock offers**, cheapest first | Same as eneba.com, and consistent with `ProductCard`, whose `offerCount` and "From" price already count only in-stock offers (`offerCount === offers.length`, featured offer = `offers[0]`). A fully sold-out product still returns `200` with `offers: []`, and the page shows "Out of stock" instead of the buy buttons. Each offer carries its own `discountPercent`, so the discount formula stays in the backend (`ProductCard::discountPercent`). |
+| 20 | **`useCart` reads a module-level store through `useSyncExternalStore`** | Every component (header badge, product page, cart page) sees the same cart without a Context Provider, and other open tabs stay in sync through the `storage` event. Corrupt or blocked `localStorage` means an empty cart, not a crash. |
